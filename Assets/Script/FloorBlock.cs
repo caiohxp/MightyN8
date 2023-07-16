@@ -8,6 +8,8 @@ public class FloorBlock : MonoBehaviour
     public int blockValue;
     public int expressionValue;
     public int operation;
+    public bool correctAnswer = false;
+    public bool wrongAnswer = false;
     public Transform valueTransform;
     public TextMeshProUGUI valueText;
     protected SpriteRenderer sprite;
@@ -31,15 +33,19 @@ public class FloorBlock : MonoBehaviour
         if(operation == 0){
             if(blockValue < expressionValue){
                 sprite.color = Color.green;
-            } else{
+                correctAnswer = true;
+            } else if(!wrongAnswer){
                 sprite.color = Color.red;
+                wrongAnswer = true;
                 player.health--;
             }
         } else if(operation == 1){
             if(blockValue > expressionValue){
                 sprite.color = Color.green;
-            } else{
+                correctAnswer = true;
+            } else if(!wrongAnswer){
                 sprite.color = Color.red;
+                wrongAnswer = true;
                 player.health--;
             }
         }

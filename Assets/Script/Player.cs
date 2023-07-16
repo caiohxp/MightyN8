@@ -81,8 +81,11 @@ public class Player : MonoBehaviour
             UnityEngine.Debug.Log("enter");
             // anim.SetBool("jump", false);
         }
-        if(collision.gameObject.layer == 9){
+        if(collision.gameObject.layer == 9 || collision.gameObject.layer == 8){
             health--;
+        }
+        if(collision.gameObject.layer == 8){
+            collision.gameObject.SetActive(false);
         }
     }
 
