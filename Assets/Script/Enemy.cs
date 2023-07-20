@@ -11,9 +11,12 @@ public class Enemy : MonoBehaviour
     public int valueLeft;
     public int valueRight;
     public int operation;
+    protected bool solved = false;
 
     protected Animator anim;
     protected Transform target;
+    private Collider2D playerCollider;
+    private Collider2D bulletCollider;
     protected float targetDistance;
     protected Rigidbody2D rb2d;
     protected SpriteRenderer sprite;
@@ -29,12 +32,12 @@ public class Enemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         target = FindObjectOfType<Player>().transform;
+        playerCollider = FindObjectOfType<Player>().GetComponent<Collider2D>();
         rb2d = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
 
         leftCounterText = leftCounterTransform.GetComponentInChildren<TextMeshProUGUI>();
         rightCounterText = rightCounterTransform.GetComponentInChildren<TextMeshProUGUI>();
-
     }
 
     // Update is called once per frame
@@ -45,25 +48,33 @@ public class Enemy : MonoBehaviour
         rightCounterTransform.position = transform.position + offset2;
         leftCounterText.text = valueLeft.ToString();
         rightCounterText.text = valueRight.ToString();
+        if(transform.position.y < -20){
+            gameObject.SetActive(false);
+        }
 
     }
     
     public void Hited(int damage){
 
-        if(operation == 0){
+        if(operation == 0 && !solved){
             valueLeft += damage;
             if(valueLeft > valueRight){
                 // Instantiate(deathAnimation, transform.position, transform.rotation);
-
-                gameObject.SetActive(false);
+                Physics2D.IgnoreCollision(GetComponent<Collider2D>(), playerCollider, true);
+                // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
+                sprite.color = Color.green;
+                solved = true;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
-        } else if(operation == 1){
+        } else if(operation == 1 && !solved){
             valueLeft += damage;
             if(valueLeft < valueRight){
                 // Instantiate(deathAnimation, transform.position, transform.rotation);
-                gameObject.SetActive(false);
+                Physics2D.IgnoreCollision(GetComponent<Collider2D>(), playerCollider, true);
+                // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
+                sprite.color = Color.green;
+                solved = true;
             }else{
                 StartCoroutine(HitedCoRoutine());
             }

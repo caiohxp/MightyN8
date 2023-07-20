@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public GameObject camera;
-    public float Speed = 10;
+    public float Speed = 10f;
     public float JumpForce = 600;
     public bool isDead = false;
     private Rigidbody2D rig;
@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     public float nextFire = 0;
     public Transform shotSpawnerUp;
     public Transform shotSpawnerDown;
+    private bool lookingCamera = false;
+    private SpriteRenderer sprite;
 
     private Animator anim;
 
@@ -29,6 +31,7 @@ public class Player : MonoBehaviour
     {
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -44,31 +47,41 @@ public class Player : MonoBehaviour
 
     void Move()
     {
+        // rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
         transform.position += movement * Time.deltaTime * Speed;
         if(transform.position.y < -20){
             health = 0;
         }
-        camera.transform.position = new Vector3(transform.position.x, transform.position.y+2, transform.position.z - 1);
+        if(!lookingCamera){
+            camera.transform.position = new Vector3(transform.position.x, transform.position.y+4, transform.position.z - 1);
+        }
+        if(Input.GetButtonDown("Vertical")){
+            lookingCamera = true;
+            camera.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1);
+        } else if(Input.GetButtonUp("Vertical")){
+            lookingCamera = false;
+        }
         if(Input.GetAxis("Horizontal") > 0f){
-            // anim.SetBool("walk", true);
+            anim.SetBool("walk", true);
             transform.eulerAngles = new Vector3(0f,0f,0f);
         } else if(Input.GetAxis("Horizontal") < 0f){
-            // anim.SetBool("walk", true);
+            anim.SetBool("walk", true);
             transform.eulerAngles = new Vector3(0f,180f,0f);
         } else if(Input.GetAxis("Horizontal") == 0f){
-            // anim.SetBool("walk", false);
+            anim.SetBool("walk", false);
         }
     }
     void Jump(){
         if(Input.GetButtonDown("Jump")){
             if(!isJumping){
-                rig.AddForce(new Vector2(0f,JumpForce), ForceMode2D.Impulse);
+                rig.AddForce(Vector3.up * JumpForce, ForceMode2D.Impulse);
                 doubleJump = true;
-                // anim.SetBool("jump", true);
+                anim.SetBool("walk", false);
+                anim.SetTrigger("TriggerJump");
             } else {
                 if(doubleJump){
-                    rig.AddForce(new Vector2(0f,JumpForce/2), ForceMode2D.Impulse);
+                    rig.AddForce(Vector3.up * JumpForce * 0.7f, ForceMode2D.Impulse);
                     doubleJump = false;
                 }
             }
@@ -77,12 +90,20 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision){
         if(collision.gameObject.layer == 3){
+            UnityEngine.Debug.Log("encostou");
             isJumping = false;
-            UnityEngine.Debug.Log("enter");
-            // anim.SetBool("jump", false);
+            // anim.SetTrigger("TriggerJump");
         }
+        // if (collision.gameObject.layer == 11){
+        //     UnityEngine.Debug.Log("plat.y "+ collision.contacts[0].point.y);
+        //     UnityEngine.Debug.Log("player.y "+ transform.position.y);
+        //     if (collision.contacts[0].point.y < transform.position.y){
+        //         Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>());
+        //     }
+        // }
         if(collision.gameObject.layer == 9 || collision.gameObject.layer == 8){
-            health--;
+            // health--;
+            StartCoroutine(HitedCoRoutine());
         }
         if(collision.gameObject.layer == 8){
             collision.gameObject.SetActive(false);
@@ -92,25 +113,35 @@ public class Player : MonoBehaviour
     void OnCollisionExit2D(Collision2D collision){
         if(collision.gameObject.layer == 3){
             isJumping = true;
+            UnityEngine.Debug.Log("pulou");
         }
-        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        UnityEngine.Debug.Log("test");
         FloorBlock fb = collision.gameObject.GetComponent<FloorBlock>();
         if(fb != null){
             fb.Trampled();
         }
     }
 
+    IEnumerator HitedCoRoutine(){
+        sprite.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        sprite.color = Color.white;
+    }
+
+    private void SpawnProjectile(){
+        Instantiate(bulletPlusPrefab, shotSpawnerUp.position, shotSpawnerUp.rotation);
+    }
+
     void Shot(){
         if(plusBullets > 0){
             if(Input.GetButton("Fire1") && nextFire < Time.time){
+                anim.SetTrigger("ShootPlus");
+                Invoke("SpawnProjectile", 0.15f);
                 plusBullets--;
                 nextFire = Time.time + fireRate;
-                GameObject tempBullet = Instantiate(bulletPlusPrefab, shotSpawnerUp.position, shotSpawnerUp.rotation);
             }
         }
         if(minusBullets > 0){

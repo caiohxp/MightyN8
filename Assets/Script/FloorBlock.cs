@@ -48,12 +48,15 @@ public class FloorBlock : MonoBehaviour
                 wrongAnswer = true;
                 player.health--;
             }
+        } else if(operation == 2){
+            if(blockValue == expressionValue){
+                sprite.color = Color.green;
+                correctAnswer = true;
+            } else if(!wrongAnswer){
+                sprite.color = Color.red;
+                wrongAnswer = true;
+                player.health--;
+            }
         }
-    }
-
-    IEnumerator HitedCoRoutine(){
-        sprite.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        sprite.color = Color.white;
     }
 }
