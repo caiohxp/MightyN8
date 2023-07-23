@@ -25,7 +25,7 @@ public class Bomber : Enemy
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         base.Update();
         Move();
@@ -40,18 +40,26 @@ public class Bomber : Enemy
     void TimerToExplode(){
         if(nextDecrement < Time.time){
             if(valueLeft <= 0){
-                gameObject.SetActive(false);
+                anim.SetTrigger("Death");
             }
             nextDecrement = Time.time + decrementRate;
             valueLeft--;
         }
     }
 
+    void OnDeathAnimationFinish(){
+        Destroy(gameObject, 0.5f);
+    }
+
     void Move(){
         if (movingRight){
-            transform.Translate(Vector2.right * speed * Time.deltaTime);
+            anim.SetBool("right", false);
+            anim.SetBool("left", true);
+            rb2d.velocity = Vector2.right * speed;
         } else {
-            transform.Translate(Vector2.left * speed * Time.deltaTime);
+            anim.SetBool("left", false);
+            anim.SetBool("right", true);
+            rb2d.velocity = Vector2.left * speed;
         }
 
         if (transform.position.x >= maxX){

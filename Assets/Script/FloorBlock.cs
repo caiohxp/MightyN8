@@ -5,55 +5,55 @@ using TMPro;
 
 public class FloorBlock : MonoBehaviour
 {
-    public int blockValue;
+    public int varValue;
     public int expressionValue;
-    public int operation;
+    public int symbolValue;
     public bool correctAnswer = false;
     public bool wrongAnswer = false;
     public Transform valueTransform;
     public TextMeshProUGUI valueText;
-    protected SpriteRenderer sprite;
+    protected SpriteRenderer varSprite;
     Player player;
 
     void Start()
     {
         valueText = valueTransform.GetComponentInChildren<TextMeshProUGUI>();
-        sprite = GetComponent<SpriteRenderer>();
+        varSprite = GetComponent<SpriteRenderer>();
         player = FindObjectOfType<Player>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        valueText.text = blockValue.ToString();
+        valueText.text = varValue.ToString();
     }
 
     public void Trampled(){
 
-        if(operation == 0){
-            if(blockValue < expressionValue){
-                sprite.color = Color.green;
+        if(symbolValue == 0){
+            if(varValue < expressionValue){
+                varSprite.color = Color.green;
                 correctAnswer = true;
             } else if(!wrongAnswer){
-                sprite.color = Color.red;
+                varSprite.color = Color.red;
                 wrongAnswer = true;
                 player.health--;
             }
-        } else if(operation == 1){
-            if(blockValue > expressionValue){
-                sprite.color = Color.green;
+        } else if(symbolValue == 1){
+            if(varValue > expressionValue){
+                varSprite.color = Color.green;
                 correctAnswer = true;
             } else if(!wrongAnswer){
-                sprite.color = Color.red;
+                varSprite.color = Color.red;
                 wrongAnswer = true;
                 player.health--;
             }
-        } else if(operation == 2){
-            if(blockValue == expressionValue){
-                sprite.color = Color.green;
+        } else if(symbolValue == 2){
+            if(varValue == expressionValue){
+                varSprite.color = Color.green;
                 correctAnswer = true;
             } else if(!wrongAnswer){
-                sprite.color = Color.red;
+                varSprite.color = Color.red;
                 wrongAnswer = true;
                 player.health--;
             }

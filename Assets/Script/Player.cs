@@ -17,12 +17,15 @@ public class Player : MonoBehaviour
     public int health = 3;
     public int plusBullets;
     public int minusBullets;
-    public float fireRate = 50;
+    public int score = 0;
+    private string time;
+    public float fireRate = 5;
     public float nextFire = 0;
     public Transform shotSpawnerUp;
     public Transform shotSpawnerDown;
     private bool lookingCamera = false;
     private SpriteRenderer sprite;
+    public Font customFont;
 
     private Animator anim;
 
@@ -43,13 +46,14 @@ public class Player : MonoBehaviour
         if(health <= 0){
             gameObject.SetActive(false);
         }
+
     }
 
     void Move()
     {
-        // rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
-        transform.position += movement * Time.deltaTime * Speed;
+        rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
+        // Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
+        // transform.position += movement * Time.deltaTime * Speed;
         if(transform.position.y < -20){
             health = 0;
         }
@@ -72,6 +76,7 @@ public class Player : MonoBehaviour
             anim.SetBool("walk", false);
         }
     }
+
     void Jump(){
         if(Input.GetButtonDown("Jump")){
             if(!isJumping){
@@ -86,53 +91,6 @@ public class Player : MonoBehaviour
                 }
             }
         }
-    }
-
-    void OnCollisionEnter2D(Collision2D collision){
-        if(collision.gameObject.layer == 3){
-            UnityEngine.Debug.Log("encostou");
-            isJumping = false;
-            // anim.SetTrigger("TriggerJump");
-        }
-        // if (collision.gameObject.layer == 11){
-        //     UnityEngine.Debug.Log("plat.y "+ collision.contacts[0].point.y);
-        //     UnityEngine.Debug.Log("player.y "+ transform.position.y);
-        //     if (collision.contacts[0].point.y < transform.position.y){
-        //         Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>());
-        //     }
-        // }
-        if(collision.gameObject.layer == 9 || collision.gameObject.layer == 8){
-            // health--;
-            StartCoroutine(HitedCoRoutine());
-        }
-        if(collision.gameObject.layer == 8){
-            collision.gameObject.SetActive(false);
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D collision){
-        if(collision.gameObject.layer == 3){
-            isJumping = true;
-            UnityEngine.Debug.Log("pulou");
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        FloorBlock fb = collision.gameObject.GetComponent<FloorBlock>();
-        if(fb != null){
-            fb.Trampled();
-        }
-    }
-
-    IEnumerator HitedCoRoutine(){
-        sprite.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        sprite.color = Color.white;
-    }
-
-    private void SpawnProjectile(){
-        Instantiate(bulletPlusPrefab, shotSpawnerUp.position, shotSpawnerUp.rotation);
     }
 
     void Shot(){
@@ -152,4 +110,87 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    void OnCollisionEnter2D(Collision2D collision){
+        if(collision.gameObject.layer == 9 || collision.gameObject.layer == 8){
+            health--;
+            StartCoroutine(HitedCoRoutine());
+            if(isJumping){
+                rig.velocity = Vector2.zero;
+                rig.AddForce(Vector2.up * 20, ForceMode2D.Impulse);
+            }
+        }
+        if(collision.gameObject.layer == 8){
+            collision.gameObject.SetActive(false);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        FloorBlock fb = collision.gameObject.GetComponent<FloorBlock>();
+        if(fb != null){
+            fb.Trampled();
+        }
+        DangerBlock db = collision.gameObject.GetComponent<DangerBlock>();
+        if(db != null){
+            if(db.danger){
+                health--;
+                StartCoroutine(HitedCoRoutine());
+            }
+        }
+        if(collision.gameObject.layer == 13){
+            UnityEngine.Debug.Log("Glória a Deus");
+            isJumping = false;
+            anim.SetBool("jump", false);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        if(collision.gameObject.layer == 13){
+            UnityEngine.Debug.Log("pulou");
+            isJumping = true;
+            anim.SetBool("jump", true);
+        }
+        
+    }
+
+    IEnumerator HitedCoRoutine(){
+        sprite.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        sprite.color = Color.white;
+    }
+
+    private void SpawnProjectile(){
+        Instantiate(bulletPlusPrefab, shotSpawnerUp.position, shotSpawnerUp.rotation);
+    }
+
+    // private void OnGUI()
+    // {
+    //     // Define a posição e o tamanho das imagens na tela
+    //     float imageSize = 30f;
+    //     float spacing = 10f;
+    //     float topMargin = 10f;
+    //     float leftMargin = 10f;
+    //     GUIStyle style = new GUIStyle();
+    //     style.font = customFont;
+    //     style.fontSize = 20;
+    //     style.normal.textColor = Color.white;
+
+    //     // Exibe a imagem de vidas na tela
+    //     GUI.DrawTexture(new Rect(leftMargin, topMargin, imageSize, imageSize), plusHUDTexture);
+
+    //     // Exibe a imagem de tiros na tela
+    //     GUI.DrawTexture(new Rect(leftMargin, topMargin + imageSize + spacing, imageSize, imageSize), minusHUDTexture);
+
+    //     // Exibe a imagem de inimigos mortos na tela
+    //     GUI.DrawTexture(new Rect(leftMargin, topMargin + 2 * (imageSize + spacing), imageSize, imageSize), healthTexture);
+
+    //     // Exibe os valores das informações do jogador ao lado das imagens
+    //     GUI.Label(new Rect(leftMargin + imageSize + spacing, topMargin + 10, 100f, imageSize), "X " + plusBullets.ToString(), style);
+    //     GUI.Label(new Rect(leftMargin + imageSize + spacing, topMargin + 10 + imageSize + spacing, 100f, imageSize), "X " + minusBullets.ToString(), style);
+    //     GUI.Label(new Rect(leftMargin + imageSize + spacing, topMargin + 10 + 2 * (imageSize + spacing), 100f, imageSize), "X " + health.ToString(), style);
+    //     GUI.Label(new Rect(leftMargin + 400, topMargin + 10, 100f, imageSize), time, style);
+    //     GUI.Label(new Rect(leftMargin + 400, topMargin + 10 + imageSize + spacing, 100f, imageSize), "Score: " + score.ToString() + "/30", style);
+    // }
+
 }

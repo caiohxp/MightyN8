@@ -7,11 +7,11 @@ public class Enemy : MonoBehaviour
 {
     public float speed;
     public float attackDistance;
-    public GameObject deathAnimation;
     public int valueLeft;
     public int valueRight;
     public int operation;
     protected bool solved = false;
+    protected bool onFloor = true;
 
     protected Animator anim;
     protected Transform target;
@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     public Vector3 offset2;
     protected TextMeshProUGUI leftCounterText;
     protected TextMeshProUGUI rightCounterText;
+    public Player player;
     
     void Awake()
     {
@@ -64,6 +65,7 @@ public class Enemy : MonoBehaviour
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
+                player.score++;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
@@ -85,6 +87,28 @@ public class Enemy : MonoBehaviour
         sprite.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         sprite.color = Color.white;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision){
+        if(collision.gameObject.layer == 12){
+            onFloor = true;
+        }
+    }
+    void OnCollisionExit2D(Collision2D collision){
+        if(collision.gameObject.layer == 12){
+            onFloor = false;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision){
+        if(collision.gameObject.layer == 13){
+            onFloor = true;
+        }
+    }
+    void OnTriggerExit2D(Collider2D collision){
+        if(collision.gameObject.layer == 13){
+            onFloor = false;
+        }
     }
 
 }

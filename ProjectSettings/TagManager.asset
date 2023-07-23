@@ -17,8 +17,8 @@ TagManager:
   - Enemy
   - DestructBlock
   - Plataforma
-  - 
-  - 
+  - DangerBlock
+  - Floor
   - 
   - 
   - 
@@ -52,4 +52,7 @@ TagManager:
     locked: 0
   - name: Frontground
     uniqueID: 3453440067
+    locked: 0
+  - name: HUD
+    uniqueID: 1778632949
     locked: 0
