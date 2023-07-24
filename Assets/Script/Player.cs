@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -17,7 +18,6 @@ public class Player : MonoBehaviour
     public int health = 3;
     public int plusBullets;
     public int minusBullets;
-    public int score = 0;
     private string time;
     public float fireRate = 5;
     public float nextFire = 0;
@@ -25,7 +25,8 @@ public class Player : MonoBehaviour
     public Transform shotSpawnerDown;
     private bool lookingCamera = false;
     private SpriteRenderer sprite;
-    public Font customFont;
+    private bool onFinalPlatform = false;
+    private float positionYOnFinalPlatform;
 
     private Animator anim;
 
@@ -40,13 +41,54 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
-        Jump();
-        Shot();
+        if(!onFinalPlatform){
+            if(!Input.GetButton("Fire3"))
+                Move();
+            MoveCamera();
+            Jump();
+            Shot();
+        }
         if(health <= 0){
+            GameController.instance.ShowGameOver();
+            
             gameObject.SetActive(false);
         }
 
+    }
+
+    void MoveCamera(){
+        if(!lookingCamera){
+            camera.transform.position = new Vector3(transform.position.x, transform.position.y+4, transform.position.z - 1);
+        }
+        if(Input.GetButton("Fire3")){
+            lookingCamera = true;
+            if(Input.GetButton("Vertical") && Input.GetButton("Fire3") && Input.GetButton("Horizontal")){
+                if(Input.GetAxis("Vertical") > 0 && Input.GetAxis("Horizontal") > 0) {
+                    camera.transform.position = new Vector3(transform.position.x + 10, transform.position.y+8, transform.position.z - 1);
+                } else if(Input.GetAxis("Vertical") > 0 && Input.GetAxis("Horizontal") < 0){
+                    camera.transform.position = new Vector3(transform.position.x - 10, transform.position.y+8, transform.position.z - 1);
+                } else if(Input.GetAxis("Vertical") < 0 && Input.GetAxis("Horizontal") < 0){
+                    camera.transform.position = new Vector3(transform.position.x - 10, transform.position.y, transform.position.z - 1);
+                } else if(Input.GetAxis("Vertical") < 0 && Input.GetAxis("Horizontal") > 0){
+                    camera.transform.position = new Vector3(transform.position.x + 10, transform.position.y, transform.position.z - 1);
+                }
+            } else if(Input.GetButton("Vertical") && Input.GetButton("Fire3")){
+                if(Input.GetAxis("Vertical") > 0){
+                    camera.transform.position = new Vector3(transform.position.x, transform.position.y+8, transform.position.z - 1);
+                } else{
+                    camera.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1);
+                }
+            } else if(Input.GetButton("Horizontal") && Input.GetButton("Fire3")){
+                if(Input.GetAxis("Horizontal") > 0){
+                    camera.transform.position = new Vector3(transform.position.x + 10, transform.position.y+4, transform.position.z - 1);
+                } else{
+                    camera.transform.position = new Vector3(transform.position.x - 10, transform.position.y+4, transform.position.z - 1);
+                }
+            }
+        }
+        else{
+            lookingCamera = false;
+        }
     }
 
     void Move()
@@ -54,18 +96,6 @@ public class Player : MonoBehaviour
         rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
         // Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
         // transform.position += movement * Time.deltaTime * Speed;
-        if(transform.position.y < -20){
-            health = 0;
-        }
-        if(!lookingCamera){
-            camera.transform.position = new Vector3(transform.position.x, transform.position.y+4, transform.position.z - 1);
-        }
-        if(Input.GetButtonDown("Vertical")){
-            lookingCamera = true;
-            camera.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1);
-        } else if(Input.GetButtonUp("Vertical")){
-            lookingCamera = false;
-        }
         if(Input.GetAxis("Horizontal") > 0f){
             anim.SetBool("walk", true);
             transform.eulerAngles = new Vector3(0f,0f,0f);
@@ -75,6 +105,7 @@ public class Player : MonoBehaviour
         } else if(Input.GetAxis("Horizontal") == 0f){
             anim.SetBool("walk", false);
         }
+        
     }
 
     void Jump(){
@@ -123,6 +154,10 @@ public class Player : MonoBehaviour
         if(collision.gameObject.layer == 8){
             collision.gameObject.SetActive(false);
         }
+
+        if(collision.gameObject.layer == 15){
+            health = 0;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -139,15 +174,29 @@ public class Player : MonoBehaviour
             }
         }
         if(collision.gameObject.layer == 13){
-            UnityEngine.Debug.Log("Glória a Deus");
             isJumping = false;
             anim.SetBool("jump", false);
+        }
+
+        if(collision.gameObject.layer == 14){
+            positionYOnFinalPlatform = transform.position.y;
+        }
+
+    }
+
+    private void OnTriggerStay2D(Collider2D collision) {
+        if(collision.gameObject.layer == 14){
+            collision.gameObject.transform.Translate(Vector2.down * Speed * Time.deltaTime);
+            transform.Translate(Vector2.down * Speed * Time.deltaTime);
+            onFinalPlatform = true;
+            if(transform.position.y < positionYOnFinalPlatform - 10){
+                GameController.instance.CalcNota();
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision) {
         if(collision.gameObject.layer == 13){
-            UnityEngine.Debug.Log("pulou");
             isJumping = true;
             anim.SetBool("jump", true);
         }

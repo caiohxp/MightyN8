@@ -34,7 +34,7 @@ public class HUD : MonoBehaviour
     void Update()
     {
         Timer();
-        textScore.text = "Score: " + player.score.ToString() + "/30";
+        textScore.text = "Pontos: " + GameController.instance.totalPoints.ToString();
         textHealth.text = "X " + player.health.ToString();
         textPlusBullets.text = "X " + player.plusBullets.ToString();
         textMinusBullets.text = "X " + player.minusBullets.ToString();

@@ -4,18 +4,11 @@ using UnityEngine;
 
 public class Chaser : Enemy
 {
-    public float areaX = 5f;
-    private bool movingRight = true; 
-    private float minX;
-    private float maxX;
     private float normalSpeed;
     private float rageSpeed;
     // Start is called before the first frame update
     void Start()
     {
-        operation = 0;
-        minX = transform.position.x - areaX;
-        maxX = transform.position.x + areaX;
         normalSpeed = speed;
         rageSpeed = speed * 2;
     }
@@ -35,25 +28,10 @@ public class Chaser : Enemy
             }else{
                 speed = normalSpeed;
                 Move();
+                anim.SetBool("right", movingRight ? true : false);
+                anim.SetBool("left", movingRight ? false : true);
             }
         }
     }
 
-    void Move(){
-        if (movingRight){
-            anim.SetBool("right", true);
-            anim.SetBool("left", false);
-            rb2d.velocity = Vector2.right * speed;
-        } else {
-            anim.SetBool("left", true);
-            anim.SetBool("right", false);
-            rb2d.velocity = Vector2.left * speed;
-        }
-
-        if (transform.position.x >= maxX){
-            movingRight = false;
-        } else if (transform.position.x <= minX){
-            movingRight = true;
-        }
-    }
 }

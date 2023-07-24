@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Nota
   layers:
   - Default
   - TransparentFX
@@ -19,8 +20,8 @@ TagManager:
   - Plataforma
   - DangerBlock
   - Floor
-  - 
-  - 
+  - NextLevel
+  - Spike
   - 
   - 
   - 
@@ -55,4 +56,7 @@ TagManager:
     locked: 0
   - name: HUD
     uniqueID: 1778632949
+    locked: 0
+  - name: PosGame
+    uniqueID: 1723064309
     locked: 0

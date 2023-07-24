@@ -5,6 +5,10 @@ using TMPro;
 
 public class Enemy : MonoBehaviour
 {
+    public float areaX = 5f;
+    protected bool movingRight = true; 
+    protected float minX;
+    protected float maxX;
     public float speed;
     public float attackDistance;
     public int valueLeft;
@@ -39,6 +43,8 @@ public class Enemy : MonoBehaviour
 
         leftCounterText = leftCounterTransform.GetComponentInChildren<TextMeshProUGUI>();
         rightCounterText = rightCounterTransform.GetComponentInChildren<TextMeshProUGUI>();
+        minX = transform.position.x - areaX;
+        maxX = transform.position.x + areaX;
     }
 
     // Update is called once per frame
@@ -65,7 +71,8 @@ public class Enemy : MonoBehaviour
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
-                player.score++;
+                player.plusBullets += 10;
+                GameController.instance.totalPoints++;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
@@ -77,10 +84,18 @@ public class Enemy : MonoBehaviour
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
+                player.minusBullets += 10;
+                GameController.instance.totalPoints++;
             }else{
                 StartCoroutine(HitedCoRoutine());
             }
         }
+    }
+
+    public void Move(){
+        rb2d.velocity = movingRight ? Vector2.right * speed : Vector2.left * speed;
+        if (transform.position.x >= maxX) movingRight = false;
+        else if (transform.position.x <= minX) movingRight = true;
     }
 
     IEnumerator HitedCoRoutine(){
@@ -92,6 +107,13 @@ public class Enemy : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision){
         if(collision.gameObject.layer == 12){
             onFloor = true;
+        }
+        // if(collision.gameObject.layer == 3 || collision.gameObject.layer == 11 || collision.gameObject.layer == 10){
+        //     movingRight = !movingRight;
+        // }
+
+        if(collision.gameObject.layer == 15){
+            gameObject.SetActive(false);
         }
     }
     void OnCollisionExit2D(Collision2D collision){
