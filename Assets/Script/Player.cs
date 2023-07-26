@@ -30,9 +30,14 @@ public class Player : MonoBehaviour
 
     private Animator anim;
 
+    public static Player instance;
+    public Transform playerTransform;
+
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
+        playerTransform = transform;
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();

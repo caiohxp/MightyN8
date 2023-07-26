@@ -25,7 +25,7 @@ public class Bomber : Enemy
         Move();
         anim.SetBool("right", movingRight ? false : true);
         anim.SetBool("left", movingRight ? true : false);
-        if(targetDistance < attackDistance && !solved){
+        if(targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && targetDistanceY < attackDistanceY && targetDistanceY > -attackDistanceY && !solved){
             TimerToExplode();
             speed = rageSpeed;
         } else {

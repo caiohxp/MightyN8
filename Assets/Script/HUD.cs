@@ -5,7 +5,6 @@ using TMPro;
 
 public class HUD : MonoBehaviour
 {
-    public Player player;
     private float startTime;
     public float totalTime = 120f;
 
@@ -35,9 +34,9 @@ public class HUD : MonoBehaviour
     {
         Timer();
         textScore.text = "Pontos: " + GameController.instance.totalPoints.ToString();
-        textHealth.text = "X " + player.health.ToString();
-        textPlusBullets.text = "X " + player.plusBullets.ToString();
-        textMinusBullets.text = "X " + player.minusBullets.ToString();
+        textHealth.text = "X " + Player.instance.health.ToString();
+        textPlusBullets.text = "X " + Player.instance.plusBullets.ToString();
+        textMinusBullets.text = "X " + Player.instance.minusBullets.ToString();
     }
 
     void Timer(){

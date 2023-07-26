@@ -14,17 +14,18 @@ public class Shooter : Enemy
     {
         startOffset = offset;
         startOffset2 = offset2;
+        attackDistanceY = 4;
     }
 
     protected override void Update()
     {
         base.Update();
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(target.rotation.x, target.rotation.y, transform.rotation.z), speed * Time.deltaTime);
-        if(targetDistance < attackDistance && targetDistance > attackDistance * -1 && !solved){
+        if(targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && !solved){
             EnemyShot();
             anim.SetBool("shoot", true);
             anim.SetBool("walk", false);
-            if(targetDistance < 0){
+            if(targetDistanceX < 0){
                 transform.eulerAngles = new Vector3(0f, 180f, 0f);
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 0f, 0f);
                 leftCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);

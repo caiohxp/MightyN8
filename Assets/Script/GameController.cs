@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public GameObject reprovacao;
     public Transform notaReprovacao;
     private TextMeshProUGUI notaText;
+    public Player player;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +34,7 @@ public class GameController : MonoBehaviour
     }
 
     public void ChangeScene(string lvlgame){
+        DontDestroyOnLoad(player.gameObject);
         SceneManager.LoadScene(lvlgame);
     }
 

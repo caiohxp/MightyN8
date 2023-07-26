@@ -10,7 +10,8 @@ public class Enemy : MonoBehaviour
     protected float minX;
     protected float maxX;
     public float speed;
-    public float attackDistance;
+    public float attackDistanceX;
+    public float attackDistanceY;
     public int valueLeft;
     public int valueRight;
     public int operation;
@@ -21,7 +22,8 @@ public class Enemy : MonoBehaviour
     protected Transform target;
     private Collider2D playerCollider;
     private Collider2D bulletCollider;
-    protected float targetDistance;
+    protected float targetDistanceX;
+    protected float targetDistanceY;
     protected Rigidbody2D rb2d;
     protected SpriteRenderer sprite;
     private GUIStyle guiStyle = new GUIStyle();
@@ -50,7 +52,8 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        targetDistance = transform.position.x - target.position.x;
+        targetDistanceX = transform.position.x - target.position.x;
+        targetDistanceY = transform.position.y - target.position.y;
         leftCounterTransform.position = transform.position + offset;
         rightCounterTransform.position = transform.position + offset2;
         leftCounterText.text = valueLeft.ToString();
@@ -67,11 +70,12 @@ public class Enemy : MonoBehaviour
             valueLeft += damage;
             if(valueLeft > valueRight){
                 // Instantiate(deathAnimation, transform.position, transform.rotation);
-                Physics2D.IgnoreCollision(GetComponent<Collider2D>(), playerCollider, true);
+                gameObject.layer = 17;
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
                 player.plusBullets += 10;
+                player.health++;
                 GameController.instance.totalPoints++;
             } else{
                 StartCoroutine(HitedCoRoutine());
@@ -80,7 +84,7 @@ public class Enemy : MonoBehaviour
             valueLeft += damage;
             if(valueLeft < valueRight){
                 // Instantiate(deathAnimation, transform.position, transform.rotation);
-                Physics2D.IgnoreCollision(GetComponent<Collider2D>(), playerCollider, true);
+                gameObject.layer = 17;
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
@@ -125,6 +129,9 @@ public class Enemy : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision){
         if(collision.gameObject.layer == 13){
             onFloor = true;
+        }
+        if(collision.gameObject.layer == 16){
+            movingRight = !movingRight;
         }
     }
     void OnTriggerExit2D(Collider2D collision){

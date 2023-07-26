@@ -18,7 +18,7 @@ public class Chaser : Enemy
     {
         base.Update();
         if(onFloor){
-            if (targetDistance < attackDistance && targetDistance > attackDistance * -1 && !player.isJumping && !solved){
+            if (targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && !player.isJumping && targetDistanceY < attackDistanceY && targetDistanceY > -attackDistanceY  && !solved){
                 speed = rageSpeed;
                 Vector3 targetPosition = new Vector3(target.transform.position.x, transform.position.y, transform.position.z);
                 Vector3 moveDirection = (targetPosition - transform.position).normalized;
