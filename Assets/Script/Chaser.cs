@@ -11,6 +11,11 @@ public class Chaser : Enemy
     {
         normalSpeed = speed;
         rageSpeed = speed * 2;
+        if(symbolValue == 1){
+            transform.eulerAngles = new Vector3(0f, 180f, 0f);
+            leftCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
+            rightCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
+        }
     }
 
     // Update is called once per frame
@@ -28,8 +33,13 @@ public class Chaser : Enemy
             }else{
                 speed = normalSpeed;
                 Move();
-                anim.SetBool("right", movingRight ? true : false);
-                anim.SetBool("left", movingRight ? false : true);
+                if(symbolValue == 0){
+                    anim.SetBool("right", movingRight ? true : false);
+                    anim.SetBool("left", movingRight ? false : true);
+                } else if(symbolValue == 1){
+                    anim.SetBool("right", movingRight ? false : true);
+                    anim.SetBool("left", movingRight ? true : false);
+                }
             }
         }
     }

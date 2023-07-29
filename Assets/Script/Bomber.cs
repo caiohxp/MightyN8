@@ -16,6 +16,11 @@ public class Bomber : Enemy
     {
         normalSpeed = speed;
         rageSpeed = speed * 3;
+        if(symbolValue == 1){
+            transform.eulerAngles = new Vector3(0f, 180f, 0f);
+            leftCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
+            rightCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
+        }
     }
 
     // Update is called once per frame
@@ -23,8 +28,13 @@ public class Bomber : Enemy
     {
         base.Update();
         Move();
-        anim.SetBool("right", movingRight ? false : true);
-        anim.SetBool("left", movingRight ? true : false);
+        if(symbolValue == 0){
+            anim.SetBool("right", movingRight ? false : true);
+            anim.SetBool("left", movingRight ? true : false);
+        } else if(symbolValue == 1){
+            anim.SetBool("right", movingRight ? true : false);
+            anim.SetBool("left", movingRight ? false : true);
+        }
         if(targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && targetDistanceY < attackDistanceY && targetDistanceY > -attackDistanceY && !solved){
             TimerToExplode();
             speed = rageSpeed;

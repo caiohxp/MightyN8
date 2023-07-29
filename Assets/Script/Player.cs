@@ -15,10 +15,6 @@ public class Player : MonoBehaviour
 
     public GameObject bulletPlusPrefab;
     public GameObject bulletMinusPrefab;
-    public int health = 3;
-    public int plusBullets;
-    public int minusBullets;
-    private string time;
     public float fireRate = 5;
     public float nextFire = 0;
     public Transform shotSpawnerUp;
@@ -30,14 +26,9 @@ public class Player : MonoBehaviour
 
     private Animator anim;
 
-    public static Player instance;
-    public Transform playerTransform;
-
     // Start is called before the first frame update
     void Start()
     {
-        instance = this;
-        playerTransform = transform;
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
@@ -53,7 +44,7 @@ public class Player : MonoBehaviour
             Jump();
             Shot();
         }
-        if(health <= 0){
+        if(PlayerData.instance.health <= 0){
             GameController.instance.ShowGameOver();
             
             gameObject.SetActive(false);
@@ -130,26 +121,27 @@ public class Player : MonoBehaviour
     }
 
     void Shot(){
-        if(plusBullets > 0){
+        if(PlayerData.instance.plusBullets > 0){
             if(Input.GetButton("Fire1") && nextFire < Time.time){
                 anim.SetTrigger("ShootPlus");
-                Invoke("SpawnProjectile", 0.15f);
-                plusBullets--;
+                Invoke("SpawnPlusProjectile", 0.15f);
+                PlayerData.instance.plusBullets--;
                 nextFire = Time.time + fireRate;
             }
         }
-        if(minusBullets > 0){
+        if(PlayerData.instance.minusBullets > 0){
             if(Input.GetButton("Fire2") && nextFire < Time.time){
-                minusBullets--;
+                anim.SetTrigger("ShootMinus");
+                Invoke("SpawnMinusProjectile", 0.15f);
+                PlayerData.instance.minusBullets--;
                 nextFire = Time.time + fireRate;
-                GameObject tempBullet = Instantiate(bulletMinusPrefab, shotSpawnerDown.position, shotSpawnerDown.rotation);
             }
         }
     }
 
     void OnCollisionEnter2D(Collision2D collision){
         if(collision.gameObject.layer == 9 || collision.gameObject.layer == 8){
-            health--;
+            PlayerData.instance.health--;
             StartCoroutine(HitedCoRoutine());
             if(isJumping){
                 rig.velocity = Vector2.zero;
@@ -161,7 +153,7 @@ public class Player : MonoBehaviour
         }
 
         if(collision.gameObject.layer == 15){
-            health = 0;
+            PlayerData.instance.health = 0;
         }
     }
 
@@ -174,7 +166,7 @@ public class Player : MonoBehaviour
         DangerBlock db = collision.gameObject.GetComponent<DangerBlock>();
         if(db != null){
             if(db.danger){
-                health--;
+                PlayerData.instance.health--;
                 StartCoroutine(HitedCoRoutine());
             }
         }
@@ -205,8 +197,12 @@ public class Player : MonoBehaviour
             isJumping = true;
             anim.SetBool("jump", true);
         }
+        if(collision.gameObject.layer == 14){
+            onFinalPlatform = false;
+        }
         
     }
+    
 
     IEnumerator HitedCoRoutine(){
         sprite.color = Color.red;
@@ -214,37 +210,13 @@ public class Player : MonoBehaviour
         sprite.color = Color.white;
     }
 
-    private void SpawnProjectile(){
+    private void SpawnPlusProjectile(){
         Instantiate(bulletPlusPrefab, shotSpawnerUp.position, shotSpawnerUp.rotation);
     }
 
-    // private void OnGUI()
-    // {
-    //     // Define a posição e o tamanho das imagens na tela
-    //     float imageSize = 30f;
-    //     float spacing = 10f;
-    //     float topMargin = 10f;
-    //     float leftMargin = 10f;
-    //     GUIStyle style = new GUIStyle();
-    //     style.font = customFont;
-    //     style.fontSize = 20;
-    //     style.normal.textColor = Color.white;
+    private void SpawnMinusProjectile(){
+        Instantiate(bulletMinusPrefab, shotSpawnerDown.position, shotSpawnerDown.rotation);
+    }
 
-    //     // Exibe a imagem de vidas na tela
-    //     GUI.DrawTexture(new Rect(leftMargin, topMargin, imageSize, imageSize), plusHUDTexture);
-
-    //     // Exibe a imagem de tiros na tela
-    //     GUI.DrawTexture(new Rect(leftMargin, topMargin + imageSize + spacing, imageSize, imageSize), minusHUDTexture);
-
-    //     // Exibe a imagem de inimigos mortos na tela
-    //     GUI.DrawTexture(new Rect(leftMargin, topMargin + 2 * (imageSize + spacing), imageSize, imageSize), healthTexture);
-
-    //     // Exibe os valores das informações do jogador ao lado das imagens
-    //     GUI.Label(new Rect(leftMargin + imageSize + spacing, topMargin + 10, 100f, imageSize), "X " + plusBullets.ToString(), style);
-    //     GUI.Label(new Rect(leftMargin + imageSize + spacing, topMargin + 10 + imageSize + spacing, 100f, imageSize), "X " + minusBullets.ToString(), style);
-    //     GUI.Label(new Rect(leftMargin + imageSize + spacing, topMargin + 10 + 2 * (imageSize + spacing), 100f, imageSize), "X " + health.ToString(), style);
-    //     GUI.Label(new Rect(leftMargin + 400, topMargin + 10, 100f, imageSize), time, style);
-    //     GUI.Label(new Rect(leftMargin + 400, topMargin + 10 + imageSize + spacing, 100f, imageSize), "Score: " + score.ToString() + "/30", style);
-    // }
-
+    
 }

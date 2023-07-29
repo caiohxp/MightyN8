@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     public float attackDistanceY;
     public int valueLeft;
     public int valueRight;
-    public int operation;
+    public int symbolValue;
     protected bool solved = false;
     protected bool onFloor = true;
 
@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour
     
     public void Hited(int damage){
 
-        if(operation == 0 && !solved){
+        if(symbolValue == 0 && !solved){
             valueLeft += damage;
             if(valueLeft > valueRight){
                 // Instantiate(deathAnimation, transform.position, transform.rotation);
@@ -74,13 +74,13 @@ public class Enemy : MonoBehaviour
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
-                player.plusBullets += 10;
-                player.health++;
-                GameController.instance.totalPoints++;
+                PlayerData.instance.plusBullets += 10;
+                PlayerData.instance.health++;
+                PlayerData.instance.totalPoints++;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
-        } else if(operation == 1 && !solved){
+        } else if(symbolValue == 1 && !solved){
             valueLeft += damage;
             if(valueLeft < valueRight){
                 // Instantiate(deathAnimation, transform.position, transform.rotation);
@@ -88,8 +88,9 @@ public class Enemy : MonoBehaviour
                 // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
                 sprite.color = Color.green;
                 solved = true;
-                player.minusBullets += 10;
-                GameController.instance.totalPoints++;
+                PlayerData.instance.minusBullets += 10;
+                PlayerData.instance.health++;
+                PlayerData.instance.totalPoints++;
             }else{
                 StartCoroutine(HitedCoRoutine());
             }

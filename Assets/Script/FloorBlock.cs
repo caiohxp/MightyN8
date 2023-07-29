@@ -13,7 +13,7 @@ public class FloorBlock : MonoBehaviour
     public Transform valueTransform;
     public TextMeshProUGUI valueText;
     protected SpriteRenderer varSprite;
-    Player player;
+    public Player player;
 
     void Start()
     {
@@ -37,7 +37,7 @@ public class FloorBlock : MonoBehaviour
             } else if(!wrongAnswer){
                 varSprite.color = Color.red;
                 wrongAnswer = true;
-                player.health--;
+                PlayerData.instance.health--;
             }
         } else if(symbolValue == 1){
             if(varValue > expressionValue){
@@ -46,7 +46,7 @@ public class FloorBlock : MonoBehaviour
             } else if(!wrongAnswer){
                 varSprite.color = Color.red;
                 wrongAnswer = true;
-                player.health--;
+                PlayerData.instance.health--;
             }
         } else if(symbolValue == 2){
             if(varValue == expressionValue){
@@ -55,7 +55,7 @@ public class FloorBlock : MonoBehaviour
             } else if(!wrongAnswer){
                 varSprite.color = Color.red;
                 wrongAnswer = true;
-                player.health--;
+                PlayerData.instance.health--;
             }
         }
     }

@@ -33,10 +33,10 @@ public class HUD : MonoBehaviour
     void Update()
     {
         Timer();
-        textScore.text = "Pontos: " + GameController.instance.totalPoints.ToString();
-        textHealth.text = "X " + Player.instance.health.ToString();
-        textPlusBullets.text = "X " + Player.instance.plusBullets.ToString();
-        textMinusBullets.text = "X " + Player.instance.minusBullets.ToString();
+        textScore.text = "Pontos: " + PlayerData.instance.totalPoints.ToString();
+        textHealth.text = "X " + PlayerData.instance.health.ToString();
+        textPlusBullets.text = "X " + PlayerData.instance.plusBullets.ToString();
+        textMinusBullets.text = "X " + PlayerData.instance.minusBullets.ToString();
     }
 
     void Timer(){
@@ -49,5 +49,9 @@ public class HUD : MonoBehaviour
 
         // Atualiza o texto do timer na interface
         textTimer.text = minutes + ":" + seconds;
+
+        if(timeRemaining <= 0){
+            PlayerData.instance.health = 0;
+        }
     }
 }
