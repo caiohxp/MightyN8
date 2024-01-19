@@ -121,7 +121,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.85, y: 3.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -166,11 +166,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dbc7e9467cfa3a4ea87fc2dd19a0750, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  areaX: 4
   speed: 4
-  attackDistance: 12
+  attackDistanceX: 0
+  attackDistanceY: 0
   valueLeft: 5
   valueRight: 15
-  operation: 0
+  symbolValue: 0
   leftCounterTransform: {fileID: 3074979999462364364}
   rightCounterTransform: {fileID: 939795695126827093}
   offset: {x: -1.4, y: -1.9, z: 0}
@@ -178,7 +180,6 @@ MonoBehaviour:
   player: {fileID: 0}
   nextDecrement: 0
   decrementRate: 2
-  areaX: 4
 --- !u!70 &7455846317173735835
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

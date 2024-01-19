@@ -63,34 +63,53 @@ public class Enemy : MonoBehaviour
         }
 
     }
+
+    private void Solved(){
+        // Instantiate(deathAnimation, transform.position, transform.rotation);
+            gameObject.layer = 17;
+            // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
+            sprite.color = Color.green;
+            solved = true;
+            PlayerData.instance.health++;
+            PlayerData.instance.totalPoints++;
+    }
     
-    public void Hited(int damage){
+    public void HitedFromLeft(int damage){
 
         if(symbolValue == 0 && !solved){
             valueLeft += damage;
             if(valueLeft > valueRight){
-                // Instantiate(deathAnimation, transform.position, transform.rotation);
-                gameObject.layer = 17;
-                // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
-                sprite.color = Color.green;
-                solved = true;
-                PlayerData.instance.plusBullets += 10;
-                PlayerData.instance.health++;
-                PlayerData.instance.totalPoints++;
+                Solved();
+                PlayerData.instance.plusBullets += 5;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
         } else if(symbolValue == 1 && !solved){
             valueLeft += damage;
             if(valueLeft < valueRight){
-                // Instantiate(deathAnimation, transform.position, transform.rotation);
-                gameObject.layer = 17;
-                // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
-                sprite.color = Color.green;
-                solved = true;
-                PlayerData.instance.minusBullets += 10;
-                PlayerData.instance.health++;
-                PlayerData.instance.totalPoints++;
+                Solved();
+                PlayerData.instance.minusBullets += 5;
+            }else{
+                StartCoroutine(HitedCoRoutine());
+            }
+        }
+    }
+
+    public void HitedFromRight(int damage){
+
+        if(symbolValue == 0 && !solved){
+            valueRight += damage;
+            if(valueLeft > valueRight){
+                Solved();
+                PlayerData.instance.minusBullets += 5;
+            } else{
+                StartCoroutine(HitedCoRoutine());
+            }
+        } else if(symbolValue == 1 && !solved){
+            valueRight += damage;
+            if(valueLeft < valueRight){
+                Solved();
+                PlayerData.instance.plusBullets += 5;
             }else{
                 StartCoroutine(HitedCoRoutine());
             }

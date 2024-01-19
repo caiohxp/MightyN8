@@ -17,6 +17,10 @@ public class Player : MonoBehaviour
     public GameObject bulletMinusPrefab;
     public float fireRate = 5;
     public float nextFire = 0;
+    public float KBForce = 5;
+    public float KBCounter;
+    public float KBTotalTime;
+    public bool KnockFromRight;
     public Transform shotSpawnerUp;
     public Transform shotSpawnerDown;
     private bool lookingCamera = false;
@@ -89,7 +93,12 @@ public class Player : MonoBehaviour
 
     void Move()
     {
-        rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
+        if(KBCounter <= 0) rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
+        else{
+            if(KnockFromRight) rig.velocity = new Vector2(-KBForce, KBForce);
+            else rig.velocity = new Vector2(KBForce, KBForce);
+            KBCounter -= Time.deltaTime;
+        }
         // Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
         // transform.position += movement * Time.deltaTime * Speed;
         if(Input.GetAxis("Horizontal") > 0f){
@@ -139,14 +148,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    void KnockBack(float playerPosition, float collisionPosition){
+        KBCounter = KBTotalTime;
+        if(playerPosition <= collisionPosition) KnockFromRight = true;
+        else KnockFromRight = false;
+    }
+
     void OnCollisionEnter2D(Collision2D collision){
         if(collision.gameObject.layer == 9 || collision.gameObject.layer == 8){
             PlayerData.instance.health--;
+            KnockBack(transform.position.x, collision.transform.position.x);
             StartCoroutine(HitedCoRoutine());
-            if(isJumping){
-                rig.velocity = Vector2.zero;
-                rig.AddForce(Vector2.up * 20, ForceMode2D.Impulse);
-            }
         }
         if(collision.gameObject.layer == 8){
             collision.gameObject.SetActive(false);
@@ -166,6 +178,7 @@ public class Player : MonoBehaviour
         DangerBlock db = collision.gameObject.GetComponent<DangerBlock>();
         if(db != null){
             if(db.danger){
+                KnockBack(transform.position.x, collision.transform.position.x);
                 PlayerData.instance.health--;
                 StartCoroutine(HitedCoRoutine());
             }

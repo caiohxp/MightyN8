@@ -22,7 +22,7 @@ public class BooleanObstacle : MonoBehaviour
     {
         if(fb.correctAnswer){
             sprite.color = Color.green;
-            Physics2D.IgnoreCollision(obstacleCollider, playerCollider, true);
+            gameObject.layer = 17;
         } else {
             sprite.color = Color.red;
         }

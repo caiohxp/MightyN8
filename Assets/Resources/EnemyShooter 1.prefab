@@ -424,10 +424,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaX: 5
   speed: 2
-  attackDistance: 20
+  attackDistanceX: 0
+  attackDistanceY: 0
   valueLeft: 5
   valueRight: 8
-  operation: 0
+  symbolValue: 0
   leftCounterTransform: {fileID: 878095805488370974}
   rightCounterTransform: {fileID: 7740355118502539932}
   offset: {x: 0, y: 1.2, z: 0}
@@ -483,7 +484,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.85, y: 3.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

@@ -28,34 +28,57 @@ public class FloorBlock : MonoBehaviour
         valueText.text = varValue.ToString();
     }
 
-    public void Trampled(){
+    void correct()
+    {
+        varSprite.color = Color.green;
+        correctAnswer = true;
+        PlayerData.instance.plusBullets += 5;
+        PlayerData.instance.minusBullets += 5;
+    }
 
-        if(symbolValue == 0){
-            if(varValue < expressionValue){
-                varSprite.color = Color.green;
-                correctAnswer = true;
-            } else if(!wrongAnswer){
-                varSprite.color = Color.red;
-                wrongAnswer = true;
-                PlayerData.instance.health--;
+    void wrong()
+    {
+        varSprite.color = Color.red;
+        wrongAnswer = true;
+        PlayerData.instance.health--;
+        PlayerData.instance.plusBullets += 2;
+        PlayerData.instance.minusBullets += 2;
+    }
+
+    public void Trampled()
+    {
+
+        if (symbolValue == 0)
+        {
+            if (varValue < expressionValue)
+            {
+                correct();
             }
-        } else if(symbolValue == 1){
-            if(varValue > expressionValue){
-                varSprite.color = Color.green;
-                correctAnswer = true;
-            } else if(!wrongAnswer){
-                varSprite.color = Color.red;
-                wrongAnswer = true;
-                PlayerData.instance.health--;
+            else if (!wrongAnswer)
+            {
+                wrong();
             }
-        } else if(symbolValue == 2){
-            if(varValue == expressionValue){
-                varSprite.color = Color.green;
-                correctAnswer = true;
-            } else if(!wrongAnswer){
-                varSprite.color = Color.red;
-                wrongAnswer = true;
-                PlayerData.instance.health--;
+        }
+        else if (symbolValue == 1)
+        {
+            if (varValue > expressionValue)
+            {
+                correct();
+            }
+            else if (!wrongAnswer)
+            {
+                wrong();
+            }
+        }
+        else if (symbolValue == 2)
+        {
+            if (varValue == expressionValue)
+            {
+                correct();
+            }
+            else if (!wrongAnswer)
+            {
+                wrong();
             }
         }
     }

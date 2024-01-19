@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -64,6 +65,7 @@ public class DangerBlock : MonoBehaviour
                 symbolSprite.color = Color.green;
                 varSprite.color = Color.green;
                 danger = false;
+                PlayerData.instance.plusBullets += (const1Value + const2Value)/2;
             } else{
                 const1Sprite.color = Color.red;
                 const2Sprite.color = Color.red;
@@ -81,6 +83,7 @@ public class DangerBlock : MonoBehaviour
                 symbolSprite.color = Color.green;
                 varSprite.color = Color.green;
                 danger = false;
+                PlayerData.instance.minusBullets += (const1Value + const2Value)/2;
             } else{
                 const1Sprite.color = Color.red;
                 const2Sprite.color = Color.red;

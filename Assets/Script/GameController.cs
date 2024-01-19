@@ -10,7 +10,6 @@ public class GameController : MonoBehaviour
     public int totalEnemys;
     private bool jogoPausado = false;
     public static GameController instance;
-    public GameObject mainCamera;
     public GameObject gameOver;
     public GameObject aprovacao;
     public Transform notaAprovacao;
@@ -72,7 +71,6 @@ public class GameController : MonoBehaviour
             PlayerData.instance.plusBullets +=10;
             PlayerData.instance.minusBullets += 20;
             PlayerData.instance.totalPoints = 0;
-            DontDestroyOnLoad(this.gameObject);
             DontDestroyOnLoad(PlayerData.instance.gameObject);
         }
         SceneManager.LoadScene(lvlgame);

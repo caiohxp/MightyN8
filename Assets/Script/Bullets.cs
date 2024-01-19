@@ -9,9 +9,11 @@ public class Bullets : MonoBehaviour
     public float destroyTime = 1.5f;
     private float next = 0;
     private float rate = 0.1f;
+    Vector3 initialPosition;
     // Start is called before the first frame update
     void Start()
     {
+        initialPosition = transform.position;
         Destroy(gameObject, destroyTime);
     }
 
@@ -28,7 +30,19 @@ public class Bullets : MonoBehaviour
         DestructBlock block = collision.gameObject.GetComponent<DestructBlock>();
         if (enemy != null)
         {
-            enemy.Hited(damage);
+            Vector3 impactDirection = collision.transform.position - initialPosition;
+            UnityEngine.Debug.Log(impactDirection);
+
+            if (impactDirection.x < 0 && !collision.CompareTag("Shooter"))
+            {
+                // Acertou pela direita
+                enemy.HitedFromRight(damage);
+            }
+            else
+            {
+                // Acertou pela esquerda
+                enemy.HitedFromLeft(damage);
+            }
         } else if(block != null){
             UnityEngine.Debug.Log("X");
             block.Hited(damage);
