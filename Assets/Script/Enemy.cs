@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
             valueLeft += damage;
             if(valueLeft > valueRight){
                 Solved();
-                PlayerData.instance.plusBullets += 5;
+                // PlayerData.instance.plusBullets += 5;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
@@ -88,7 +88,7 @@ public class Enemy : MonoBehaviour
             valueLeft += damage;
             if(valueLeft < valueRight){
                 Solved();
-                PlayerData.instance.minusBullets += 5;
+                // PlayerData.instance.minusBullets += 5;
             }else{
                 StartCoroutine(HitedCoRoutine());
             }
@@ -101,7 +101,7 @@ public class Enemy : MonoBehaviour
             valueRight += damage;
             if(valueLeft > valueRight){
                 Solved();
-                PlayerData.instance.minusBullets += 5;
+                // PlayerData.instance.minusBullets += 5;
             } else{
                 StartCoroutine(HitedCoRoutine());
             }
@@ -109,7 +109,7 @@ public class Enemy : MonoBehaviour
             valueRight += damage;
             if(valueLeft < valueRight){
                 Solved();
-                PlayerData.instance.plusBullets += 5;
+                // PlayerData.instance.plusBullets += 5;
             }else{
                 StartCoroutine(HitedCoRoutine());
             }

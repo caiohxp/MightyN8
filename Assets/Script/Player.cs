@@ -130,22 +130,22 @@ public class Player : MonoBehaviour
     }
 
     void Shot(){
-        if(PlayerData.instance.plusBullets > 0){
+        // if(PlayerData.instance.plusBullets > 0){
+        // }
             if(Input.GetButton("Fire1") && nextFire < Time.time){
                 anim.SetTrigger("ShootPlus");
                 Invoke("SpawnPlusProjectile", 0.15f);
-                PlayerData.instance.plusBullets--;
+                // PlayerData.instance.plusBullets--;
                 nextFire = Time.time + fireRate;
             }
-        }
-        if(PlayerData.instance.minusBullets > 0){
+        // if(PlayerData.instance.minusBullets > 0){
+        // }
             if(Input.GetButton("Fire2") && nextFire < Time.time){
                 anim.SetTrigger("ShootMinus");
                 Invoke("SpawnMinusProjectile", 0.15f);
-                PlayerData.instance.minusBullets--;
+                // PlayerData.instance.minusBullets--;
                 nextFire = Time.time + fireRate;
             }
-        }
     }
 
     void KnockBack(float playerPosition, float collisionPosition){

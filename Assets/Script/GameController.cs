@@ -68,8 +68,8 @@ public class GameController : MonoBehaviour
 
     public void ChangeScene(string lvlgame){
         if(lvlgame.Equals("fase2")){
-            PlayerData.instance.plusBullets +=10;
-            PlayerData.instance.minusBullets += 20;
+            // PlayerData.instance.plusBullets +=10;
+            // PlayerData.instance.minusBullets += 20;
             PlayerData.instance.totalPoints = 0;
             DontDestroyOnLoad(PlayerData.instance.gameObject);
         }

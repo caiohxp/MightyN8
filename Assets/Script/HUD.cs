@@ -35,8 +35,8 @@ public class HUD : MonoBehaviour
         Timer();
         textScore.text = "Pontos: " + PlayerData.instance.totalPoints.ToString();
         textHealth.text = "X " + PlayerData.instance.health.ToString();
-        textPlusBullets.text = "X " + PlayerData.instance.plusBullets.ToString();
-        textMinusBullets.text = "X " + PlayerData.instance.minusBullets.ToString();
+        // textPlusBullets.text = "X " + PlayerData.instance.plusBullets.ToString();
+        // textMinusBullets.text = "X " + PlayerData.instance.minusBullets.ToString();
     }
 
     void Timer(){

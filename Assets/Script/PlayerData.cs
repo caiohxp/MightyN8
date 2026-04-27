@@ -7,8 +7,8 @@ public class PlayerData : MonoBehaviour
     public static PlayerData instance;
     public int totalPoints;
     public int health = 10;
-    public int plusBullets;
-    public int minusBullets;
+    // public int plusBullets;
+    // public int minusBullets;
     // Start is called before the first frame update
     void Awake()
     {

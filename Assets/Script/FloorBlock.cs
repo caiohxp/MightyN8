@@ -32,8 +32,8 @@ public class FloorBlock : MonoBehaviour
     {
         varSprite.color = Color.green;
         correctAnswer = true;
-        PlayerData.instance.plusBullets += 5;
-        PlayerData.instance.minusBullets += 5;
+        // PlayerData.instance.plusBullets += 5;
+        // PlayerData.instance.minusBullets += 5;
     }
 
     void wrong()
@@ -41,8 +41,8 @@ public class FloorBlock : MonoBehaviour
         varSprite.color = Color.red;
         wrongAnswer = true;
         PlayerData.instance.health--;
-        PlayerData.instance.plusBullets += 2;
-        PlayerData.instance.minusBullets += 2;
+        // PlayerData.instance.plusBullets += 2;
+        // PlayerData.instance.minusBullets += 2;
     }
 
     public void Trampled()
