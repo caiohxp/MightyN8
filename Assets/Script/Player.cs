@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rig;
     public bool isJumping;
     public bool doubleJump;
+    bool isShooting = false;
 
     public GameObject bulletPlusPrefab;
     public GameObject bulletMinusPrefab;
@@ -101,14 +102,16 @@ public class Player : MonoBehaviour
         }
         // Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
         // transform.position += movement * Time.deltaTime * Speed;
-        if(Input.GetAxis("Horizontal") > 0f){
-            anim.SetBool("walk", true);
-            transform.eulerAngles = new Vector3(0f,0f,0f);
-        } else if(Input.GetAxis("Horizontal") < 0f){
-            anim.SetBool("walk", true);
-            transform.eulerAngles = new Vector3(0f,180f,0f);
-        } else if(Input.GetAxis("Horizontal") == 0f){
-            anim.SetBool("walk", false);
+        if(!isShooting){
+            if(Input.GetAxis("Horizontal") > 0f){
+                anim.SetBool("walk", true);
+                transform.eulerAngles = new Vector3(0f,0f,0f);
+            } else if(Input.GetAxis("Horizontal") < 0f){
+                anim.SetBool("walk", true);
+                transform.eulerAngles = new Vector3(0f,180f,0f);
+            } else if(Input.GetAxis("Horizontal") == 0f){
+                anim.SetBool("walk", false);
+            }
         }
         
     }
@@ -132,20 +135,28 @@ public class Player : MonoBehaviour
     void Shot(){
         // if(PlayerData.instance.plusBullets > 0){
         // }
-            if(Input.GetButton("Fire1") && nextFire < Time.time){
+            if(Input.GetButtonDown("Fire1") && nextFire < Time.time){
+                isShooting = true;
                 anim.SetTrigger("ShootPlus");
-                Invoke("SpawnPlusProjectile", 0.15f);
+                // Invoke("SpawnPlusProjectile", 0.15f);
                 // PlayerData.instance.plusBullets--;
+                Invoke("EndShot", fireRate);
                 nextFire = Time.time + fireRate;
             }
         // if(PlayerData.instance.minusBullets > 0){
         // }
-            if(Input.GetButton("Fire2") && nextFire < Time.time){
+            if(Input.GetButtonDown("Fire2") && nextFire < Time.time){
+                isShooting = true;
                 anim.SetTrigger("ShootMinus");
                 Invoke("SpawnMinusProjectile", 0.15f);
                 // PlayerData.instance.minusBullets--;
+                Invoke("EndShot", fireRate);
                 nextFire = Time.time + fireRate;
             }
+    }
+
+    void EndShot() {
+        isShooting = false;
     }
 
     void KnockBack(float playerPosition, float collisionPosition){
