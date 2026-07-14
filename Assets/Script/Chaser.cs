@@ -11,17 +11,21 @@ public class Chaser : Enemy
     {
         normalSpeed = speed;
         rageSpeed = speed * 2;
-        if(symbolValue == 1){
-            transform.eulerAngles = new Vector3(0f, 180f, 0f);
-            leftCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
-            rightCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
-        }
     }
 
     // Update is called once per frame
     protected override void Update()
     {
         base.Update();
+        if(symbolValue == 0){
+            transform.eulerAngles = new Vector3(0f, 0f, 0f);
+            leftCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+            rightCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+        } else if(symbolValue == 1){
+            transform.eulerAngles = new Vector3(0f, 180f, 0f);
+            leftCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+            rightCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
+        }
         if(onFloor){
             if (targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && !player.isJumping && targetDistanceY < attackDistanceY && targetDistanceY > -attackDistanceY  && !solved){
                 speed = rageSpeed;

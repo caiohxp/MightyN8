@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 41274e2d3becdce43a4337936df37ad6
+guid: e698a1834e583064dbc0e17b7c6c12d8
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,12 +110,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: oito-shot_0
+      name: oito-jump_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 95
+        width: 72
         height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -124,19 +124,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 52a528f42a2bdf74c9b2e7ea86f68b00
-      internalID: 763130455
+      spriteID: 360fb5a7c741f354c9775692dcbcee77
+      internalID: -1270744566
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: oito-shot_1
+      name: oito-jump_1
       rect:
         serializedVersion: 2
-        x: 95
+        x: 72
         y: 0
-        width: 95
+        width: 72
         height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -145,113 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bba5c95b934e83544a94f3f4aeeb7116
-      internalID: 612715592
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: oito-shot_2
-      rect:
-        serializedVersion: 2
-        x: 190
-        y: 0
-        width: 95
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3d9dbbd3159b8ef419c69ca98d55cc16
-      internalID: 972684011
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: oito-shot_3
-      rect:
-        serializedVersion: 2
-        x: 285
-        y: 0
-        width: 95
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f6583757002349141a2764c28a1b14fe
-      internalID: 1994166790
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: oito-shot_4
-      rect:
-        serializedVersion: 2
-        x: 380
-        y: 0
-        width: 95
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e5a42e639cf696e4c818e5bb2084487c
-      internalID: -1862585599
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: oito-shot_5
-      rect:
-        serializedVersion: 2
-        x: 475
-        y: 0
-        width: 95
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c938f099fd65961469b994b66ece9170
-      internalID: -663297301
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: oito-shot_6
-      rect:
-        serializedVersion: 2
-        x: 570
-        y: 0
-        width: 95
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 039ab1e2285dfa1449cee5f56ad47034
-      internalID: -1954274080
+      spriteID: dd897394d9012764cbcde76ec0ffdaf7
+      internalID: -1973358268
       vertices: []
       indices: 
       edges: []
@@ -267,13 +162,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      oito-shot_0: 763130455
-      oito-shot_1: 612715592
-      oito-shot_2: 972684011
-      oito-shot_3: 1994166790
-      oito-shot_4: -1862585599
-      oito-shot_5: -663297301
-      oito-shot_6: -1954274080
+      oito-jump_0: -1270744566
+      oito-jump_1: -1973358268
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
