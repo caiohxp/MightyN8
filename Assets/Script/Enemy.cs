@@ -34,6 +34,7 @@ public class Enemy : MonoBehaviour
     protected TextMeshProUGUI leftCounterText;
     protected TextMeshProUGUI rightCounterText;
     public Player player;
+    public float deathLimitY = -20f; 
     
     void Awake()
     {
@@ -58,7 +59,7 @@ public class Enemy : MonoBehaviour
         rightCounterTransform.position = transform.position + offset2;
         leftCounterText.text = valueLeft.ToString();
         rightCounterText.text = valueRight.ToString();
-        if(transform.position.y < -20){
+        if(transform.position.y < deathLimitY){
             gameObject.SetActive(false);
         }
 

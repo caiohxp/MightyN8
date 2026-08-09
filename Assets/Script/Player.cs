@@ -27,6 +27,14 @@ public class Player : MonoBehaviour
     private bool onFinalPlatform = false;
     private float positionYOnFinalPlatform;
 
+    // --- Variáveis do Soco (Melee) ---
+    public bool isPunching = false;
+    public float punchRate = 0.5f;
+    private float nextPunch = 0;
+    public Transform punchPoint; // Onde o soco acerta (crie um objeto vazio na frente do personagem)
+    public float punchRadius = 0.5f; // Tamanho da área de impacto do soco
+    public LayerMask enemyLayer;
+
     private Animator anim;
 
     // Start is called before the first frame update
@@ -46,6 +54,7 @@ public class Player : MonoBehaviour
                 Move();
             Jump();
             Shot();
+            Punch();
         }
         if (PlayerData.instance.health <= 0)
         {
@@ -57,7 +66,7 @@ public class Player : MonoBehaviour
 
     void Move()
     {
-        if (!isShooting)
+        if (!isShooting && !isPunching)
         {
             if (KBCounter <= 0)
                 rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
@@ -141,6 +150,64 @@ public class Player : MonoBehaviour
     void EndShot()
     {
         isShooting = false;
+    }
+
+    void Punch()
+    {
+        // Usando a tecla Z como exemplo. Você pode trocar para "Fire2" ou outro botão desejado
+        if (Input.GetButtonDown("Fire2") && nextPunch < Time.time)
+        {
+            isPunching = true;
+            
+            // Freia o personagem instantaneamente, assim como no tiro
+            rig.velocity = new Vector2(0, rig.velocity.y); 
+            
+            anim.SetTrigger("TriggerPunch"); // Nome do trigger que será criado no Animator
+            
+            nextPunch = Time.time + punchRate;
+        }
+    }
+
+    public void ApplyPunchDamage()
+    {
+        if (punchPoint == null) return;
+
+        // Cria um círculo invisível na frente do Otto que detecta tudo que estiver na layer "enemyLayer"
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(punchPoint.position, punchRadius, enemyLayer);
+        
+        foreach(Collider2D hitCollider in hitEnemies)
+        {
+            Enemy enemy = hitCollider.GetComponent<Enemy>();
+            
+            if (enemy != null)
+            {
+                Debug.Log("Otto acertou um soco em: " + enemy.gameObject.name);
+                
+                // O soco sempre soma 1, igual a bala Plus
+                int punchDamage = 1; 
+
+                // Calcula de que lado o soco veio em relação ao inimigo
+                Vector3 impactDirection = hitCollider.transform.position - transform.position;
+
+                // Se o inimigo está à direita (Oito bateu pela esquerda) ou vice-versa
+                if (impactDirection.x > 0)
+                {
+                    // Oito está na esquerda, batendo no inimigo pela esquerda
+                    enemy.HitedFromLeft(punchDamage);
+                }
+                else
+                {
+                    // Oito está na direita, batendo no inimigo pela direita
+                    enemy.HitedFromRight(punchDamage);
+                }
+            }
+        }
+    }
+
+    // Chame este método por Animation Event no ÚLTIMO FRAME da animação
+    public void EndPunch()
+    {
+        isPunching = false;
     }
 
     void KnockBack(float playerPosition, float collisionPosition)
@@ -242,5 +309,12 @@ public class Player : MonoBehaviour
     private void SpawnMinusProjectile()
     {
         Instantiate(bulletMinusPrefab, shotSpawnerDown.position, shotSpawnerDown.rotation);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (punchPoint == null) return;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(punchPoint.position, punchRadius);
     }
 }
