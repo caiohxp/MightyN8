@@ -154,53 +154,48 @@ public class Player : MonoBehaviour
 
     void Punch()
     {
-        // Usando a tecla Z como exemplo. Você pode trocar para "Fire2" ou outro botão desejado
-        if (Input.GetButtonDown("Fire2") && nextPunch < Time.time)
+        if (Input.GetButtonDown("Fire2") && nextPunch < Time.time && !isPunching && !isShooting)
         {
             isPunching = true;
-            
-            // Freia o personagem instantaneamente, assim como no tiro
-            rig.velocity = new Vector2(0, rig.velocity.y); 
-            
-            anim.SetTrigger("TriggerPunch"); // Nome do trigger que será criado no Animator
-            
+
+            // Para o movimento horizontal
+            rig.velocity = new Vector2(0, rig.velocity.y);
+
+            // Toca animação
+            anim.SetTrigger("TriggerPunch");
+
             nextPunch = Time.time + punchRate;
         }
     }
 
     public void ApplyPunchDamage()
     {
-        if (punchPoint == null) return;
+        if (punchPoint == null)
+            return;
 
-        // Cria um círculo invisível na frente do Otto que detecta tudo que estiver na layer "enemyLayer"
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(punchPoint.position, punchRadius, enemyLayer);
-        
-        foreach(Collider2D hitCollider in hitEnemies)
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
+            punchPoint.position,
+            punchRadius,
+            enemyLayer
+        );
+
+        foreach (Collider2D hitCollider in hitEnemies)
         {
             Enemy enemy = hitCollider.GetComponent<Enemy>();
-            
-            if (enemy != null)
-            {
-                Debug.Log("Otto acertou um soco em: " + enemy.gameObject.name);
-                
-                // O soco sempre soma 1, igual a bala Plus
-                int punchDamage = 1; 
 
-                // Calcula de que lado o soco veio em relação ao inimigo
-                Vector3 impactDirection = hitCollider.transform.position - transform.position;
+            if (enemy == null)
+                continue;
 
-                // Se o inimigo está à direita (Oito bateu pela esquerda) ou vice-versa
-                if (impactDirection.x > 0)
-                {
-                    // Oito está na esquerda, batendo no inimigo pela esquerda
-                    enemy.HitedFromLeft(punchDamage);
-                }
-                else
-                {
-                    // Oito está na direita, batendo no inimigo pela direita
-                    enemy.HitedFromRight(punchDamage);
-                }
-            }
+            Debug.Log("Oito derrubou: " + enemy.gameObject.name);
+
+            // Descobre de que lado o inimigo está
+            bool enemyIsOnRight = hitCollider.transform.position.x > transform.position.x;
+            bool hitFromLeft = enemyIsOnRight;
+
+            // MÁGICA DO POLIMORFISMO: 
+            // O Player manda apenas 1 argumento (o lado do soco).
+            // Todos os inimigos vão cair, e o Shooter automaticamente vai virar a inequação!
+            enemy.ReceivePunch(hitFromLeft);
         }
     }
 
@@ -220,24 +215,31 @@ public class Player : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision)
+{
+    // Enquanto estiver socando, Oito não recebe dano por contato
+    if (!isPunching &&
+        (collision.gameObject.layer == 9 || collision.gameObject.layer == 8))
     {
-        if (collision.gameObject.layer == 9 || collision.gameObject.layer == 8)
-        {
-            PlayerData.instance.health--;
-            KnockBack(transform.position.x, collision.transform.position.x);
-            StartCoroutine(HitedCoRoutine());
-        }
-        if (collision.gameObject.layer == 8)
-        {
-            collision.gameObject.SetActive(false);
-        }
+        PlayerData.instance.health--;
 
-        if (collision.gameObject.layer == 15)
-        {
-            PlayerData.instance.health = 0;
-        }
+        KnockBack(
+            transform.position.x,
+            collision.transform.position.x
+        );
+
+        StartCoroutine(HitedCoRoutine());
     }
 
+    if (collision.gameObject.layer == 8)
+    {
+        collision.gameObject.SetActive(false);
+    }
+
+    if (collision.gameObject.layer == 15)
+    {
+        PlayerData.instance.health = 0;
+    }
+}
     private void OnTriggerEnter2D(Collider2D collision)
     {
         FloorBlock fb = collision.gameObject.GetComponent<FloorBlock>();

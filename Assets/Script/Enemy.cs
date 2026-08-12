@@ -26,7 +26,6 @@ public class Enemy : MonoBehaviour
     protected float targetDistanceY;
     protected Rigidbody2D rb2d;
     protected SpriteRenderer sprite;
-    private GUIStyle guiStyle = new GUIStyle();
     public Transform leftCounterTransform;
     public Transform rightCounterTransform;
     public Vector3 offset;
@@ -35,6 +34,12 @@ public class Enemy : MonoBehaviour
     protected TextMeshProUGUI rightCounterText;
     public Player player;
     public float deathLimitY = -20f; 
+
+    // --- SISTEMA UNIVERSAL DE SOCO ---
+    public bool isKnockedDown = false;
+    public float knockdownTime = 3f;
+    public float knockbackForce = 5f;
+    protected Coroutine knockdownCoroutine;
     
     void Awake()
     {
@@ -50,115 +55,130 @@ public class Enemy : MonoBehaviour
         maxX = transform.position.x + areaX;
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
-        targetDistanceX = transform.position.x - target.position.x;
-        targetDistanceY = transform.position.y - target.position.y;
-        leftCounterTransform.position = transform.position + offset;
-        rightCounterTransform.position = transform.position + offset2;
+        // Textos acompanham a rotação física do boneco ao cair
+        leftCounterTransform.position = transform.position + (transform.rotation * offset);
+        rightCounterTransform.position = transform.position + (transform.rotation * offset2);
+        
         leftCounterText.text = valueLeft.ToString();
         rightCounterText.text = valueRight.ToString();
+
+        // Se estiver derrubado, congela a perseguição
+        if (isKnockedDown) return;
+
+        targetDistanceX = transform.position.x - target.position.x;
+        targetDistanceY = transform.position.y - target.position.y;
+        
         if(transform.position.y < deathLimitY){
             gameObject.SetActive(false);
         }
-
     }
 
-    private void Solved(){
-        // Instantiate(deathAnimation, transform.position, transform.rotation);
-            gameObject.layer = 17;
-            // Physics2D.IgnoreCollision(GetComponent<Collider2D>(), bulletCollider, true);
-            sprite.color = Color.green;
-            solved = true;
-            PlayerData.instance.health++;
-            PlayerData.instance.totalPoints++;
+    protected void Solved(){
+        gameObject.layer = 17;
+        sprite.color = Color.green;
+        solved = true;
+        PlayerData.instance.health++;
+        PlayerData.instance.totalPoints++;
     }
     
-    public void HitedFromLeft(int damage){
-
+    // Transformado em VIRTUAL para o Shooter poder bloquear se estiver em pé
+    public virtual void HitedFromLeft(int damage){
         if(symbolValue == 0 && !solved){
             valueLeft += damage;
-            if(valueLeft > valueRight){
-                Solved();
-                // PlayerData.instance.plusBullets += 5;
-            } else{
-                StartCoroutine(HitedCoRoutine());
-            }
+            if(valueLeft > valueRight) Solved();
+            else StartCoroutine(HitedCoRoutine());
         } else if(symbolValue == 1 && !solved){
             valueLeft += damage;
-            if(valueLeft < valueRight){
-                Solved();
-                // PlayerData.instance.minusBullets += 5;
-            }else{
-                StartCoroutine(HitedCoRoutine());
-            }
+            if(valueLeft < valueRight) Solved();
+            else StartCoroutine(HitedCoRoutine());
         }
     }
 
-    public void HitedFromRight(int damage){
-
+    public virtual void HitedFromRight(int damage){
         if(symbolValue == 0 && !solved){
             valueRight += damage;
-            if(valueLeft > valueRight){
-                Solved();
-                // PlayerData.instance.minusBullets += 5;
-            } else{
-                StartCoroutine(HitedCoRoutine());
-            }
+            if(valueLeft > valueRight) Solved();
+            else StartCoroutine(HitedCoRoutine());
         } else if(symbolValue == 1 && !solved){
             valueRight += damage;
-            if(valueLeft < valueRight){
-                Solved();
-                // PlayerData.instance.plusBullets += 5;
-            }else{
-                StartCoroutine(HitedCoRoutine());
-            }
+            if(valueLeft < valueRight) Solved();
+            else StartCoroutine(HitedCoRoutine());
         }
     }
 
-    public void Move(){
-        rb2d.velocity = movingRight ? Vector2.right * speed : Vector2.left * speed;
+    public virtual void Move(){
+        if (isKnockedDown) return;
+        rb2d.velocity = movingRight ? new Vector2(speed, rb2d.velocity.y) : new Vector2(-speed, rb2d.velocity.y);
         if (transform.position.x >= maxX) movingRight = false;
         else if (transform.position.x <= minX) movingRight = true;
     }
 
-    IEnumerator HitedCoRoutine(){
+    // --- MÉTODOS DO SOCO (Cair e Levantar) ---
+    public virtual void ReceivePunch(bool hitFromLeft)
+    {
+        if (solved || isKnockedDown) return;
+        KnockDown(hitFromLeft);
+    }
+
+    protected virtual void KnockDown(bool hitFromLeft)
+    {
+        isKnockedDown = true;
+        anim.SetBool("walk", false);
+        
+        // Desliga o Animator para ele não brigar com a rotação de 90 graus
+        anim.enabled = false; 
+
+        float direction = hitFromLeft ? 1f : -1f;
+        
+        // Zera o X atual para não acumular, mas mantém a gravidade (Y)
+        rb2d.velocity = new Vector2(0, rb2d.velocity.y); 
+        
+        // Dá o empurrão do soco (com um pulinho no Y para dar impacto)
+        rb2d.AddForce(new Vector2(direction * knockbackForce, 3f), ForceMode2D.Impulse);
+
+        // Gira o boneco 90 graus fisicamente
+        transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, hitFromLeft ? -90f : 90f);
+
+        if (knockdownCoroutine != null) StopCoroutine(knockdownCoroutine);
+        knockdownCoroutine = StartCoroutine(KnockdownRoutine());
+    }
+
+    protected virtual IEnumerator KnockdownRoutine()
+    {
+        yield return new WaitForSeconds(knockdownTime);
+        if (solved) yield break;
+        GetBackUp();
+    }
+
+    protected virtual void GetBackUp()
+    {
+        isKnockedDown = false;
+        anim.enabled = true; // Religa a animação
+        transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f); // Levanta o boneco
+        anim.SetBool("walk", true);
+    }
+
+    protected IEnumerator HitedCoRoutine(){
         sprite.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         sprite.color = Color.white;
     }
 
     void OnCollisionEnter2D(Collision2D collision){
-        if(collision.gameObject.layer == 12){
-            onFloor = true;
-        }
-        // if(collision.gameObject.layer == 3 || collision.gameObject.layer == 11 || collision.gameObject.layer == 10){
-        //     movingRight = !movingRight;
-        // }
-
-        if(collision.gameObject.layer == 15){
-            gameObject.SetActive(false);
-        }
+        if(collision.gameObject.layer == 12) onFloor = true;
+        if(collision.gameObject.layer == 15) gameObject.SetActive(false);
     }
     void OnCollisionExit2D(Collision2D collision){
-        if(collision.gameObject.layer == 12){
-            onFloor = false;
-        }
+        if(collision.gameObject.layer == 12) onFloor = false;
     }
 
     void OnTriggerEnter2D(Collider2D collision){
-        if(collision.gameObject.layer == 13){
-            onFloor = true;
-        }
-        if(collision.gameObject.layer == 16){
-            movingRight = !movingRight;
-        }
+        if(collision.gameObject.layer == 13) onFloor = true;
+        if(collision.gameObject.layer == 16) movingRight = !movingRight;
     }
     void OnTriggerExit2D(Collider2D collision){
-        if(collision.gameObject.layer == 13){
-            onFloor = false;
-        }
+        if(collision.gameObject.layer == 13) onFloor = false;
     }
-
 }
