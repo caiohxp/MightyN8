@@ -22,11 +22,11 @@ public class Shooter : Enemy
 
     protected override void Update()
     {
+        base.Update();
         if (isKnockedDown) {
             return; // Se estiver deitado, congela IA, mira e giro
         }
 
-        base.Update();
         
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
@@ -36,21 +36,22 @@ public class Shooter : Enemy
         
         if (targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && !solved)
         {
-            EnemyShot();
-            anim.SetBool("shoot", true);
-            anim.SetBool("walk", false);
             
             if (targetDistanceX < 0) {
                 transform.eulerAngles = new Vector3(0f, 180f, 0f);
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 0f, 0f);
-                offset.x = startOffset.x - 0.3f;
-                offset2.x = startOffset2.x - 0.3f;
+                offset.x = startOffset.x + 0.3f;
+                offset2.x = startOffset2.x + 0.3f;
             } else {
                 transform.eulerAngles = new Vector3(0f, 0f, 0f);
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 180f, 0f);
                 offset.x = startOffset.x + 0.3f;
                 offset2.x = startOffset2.x + 0.3f;
             }
+
+            anim.SetBool("shoot", true);
+            anim.SetBool("walk", false);
+            EnemyShot();
         }
         else
         {

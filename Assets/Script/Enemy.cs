@@ -138,8 +138,24 @@ public class Enemy : MonoBehaviour
         // Dá o empurrão do soco (com um pulinho no Y para dar impacto)
         rb2d.AddForce(new Vector2(direction * knockbackForce, 3f), ForceMode2D.Impulse);
 
-        // Gira o boneco 90 graus fisicamente
-        transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, hitFromLeft ? -90f : 90f);
+        // --- CORREÇÃO DO ÂNGULO DE QUEDA ---
+        float currentY = transform.eulerAngles.y;
+        
+        // Verifica se o inimigo está virado de costas (Y próximo de 180)
+        bool isFacingLeft = Mathf.Abs(currentY - 180f) < 10f; 
+        
+        // Ângulo padrão: Soco da esquerda cai pra direita (-90) / Soco da direita cai pra esquerda (90)
+        float fallAngle = hitFromLeft ? -90f : 90f;
+        
+        // Se o boneco estiver espelhado no mundo, invertemos a matemática da queda!
+        if (isFacingLeft) 
+        {
+            fallAngle = -fallAngle;
+        }
+
+        // Gira o boneco fisicamente corrigido
+        transform.eulerAngles = new Vector3(0f, currentY, fallAngle);
+        // -----------------------------------
 
         if (knockdownCoroutine != null) StopCoroutine(knockdownCoroutine);
         knockdownCoroutine = StartCoroutine(KnockdownRoutine());
