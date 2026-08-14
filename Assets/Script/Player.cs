@@ -101,6 +101,8 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump"))
         {
+            isShooting = false;
+            isPunching = false;
             if (!isJumping)
             {
                 rig.AddForce(Vector3.up * JumpForce, ForceMode2D.Impulse);
