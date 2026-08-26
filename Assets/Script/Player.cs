@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     public float Speed = 10f;
+    public float pushSpeed = 4f;
     public float JumpForce = 600;
     public bool isDead = false;
     private Rigidbody2D rig;
@@ -71,7 +72,12 @@ public class Player : MonoBehaviour
         if (!isShooting && !isPunching)
         {
             if (KBCounter <= 0)
-                rig.velocity = new Vector2(Input.GetAxis("Horizontal") * Speed, rig.velocity.y);
+            {
+                // MÁGICA AQUI: Checa se está empurrando. Se sim, usa a velocidade lenta!
+                float velocidadeAtual = isPushing ? pushSpeed : Speed;
+                
+                rig.velocity = new Vector2(Input.GetAxis("Horizontal") * velocidadeAtual, rig.velocity.y);
+            }
             else
             {
                 if (KnockFromRight)
@@ -80,16 +86,17 @@ public class Player : MonoBehaviour
                     rig.velocity = new Vector2(KBForce, KBForce);
                 KBCounter -= Time.deltaTime;
             }
-            // Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
-            // transform.position += movement * Time.deltaTime * Speed;
+            
+            // Controle de animação de caminhada normal
             if (Input.GetAxis("Horizontal") > 0f)
             {
-                anim.SetBool("walk", true);
+                // Se estiver empurrando, não toca a animação de walk, deixa a de push assumir
+                anim.SetBool("walk", !isPushing); 
                 transform.eulerAngles = new Vector3(0f, 0f, 0f);
             }
             else if (Input.GetAxis("Horizontal") < 0f)
             {
-                anim.SetBool("walk", true);
+                anim.SetBool("walk", !isPushing);
                 transform.eulerAngles = new Vector3(0f, 180f, 0f);
             }
             else if (Input.GetAxis("Horizontal") == 0f)

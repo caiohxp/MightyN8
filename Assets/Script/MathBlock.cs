@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class MathBlock : MonoBehaviour
@@ -14,16 +13,11 @@ public class MathBlock : MonoBehaviour
     public int valorDoPlayer = 8; // O valor fixo do Oito
 
     private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
-    private Color corOriginal;
-    private bool isBlinking = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        corOriginal = spriteRenderer.color;
-
+        
         // O bloco começa fisicamente travado (ancorado)
         rb.isKinematic = true; 
     }
@@ -33,6 +27,9 @@ public class MathBlock : MonoBehaviour
         // Se quem encostou foi o jogador...
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.layer == 9)
         {
+            // O Otto SEMPRE tenta empurrar visualmente quando encosta, independente da matemática
+            collision.gameObject.GetComponent<Player>().SetPushing(true);
+
             // Descobre de que lado o Otto está batendo
             bool ottoEstaNaEsquerda = collision.transform.position.x < transform.position.x;
             bool expressaoCorreta = false;
@@ -52,35 +49,25 @@ public class MathBlock : MonoBehaviour
             {
                 // Matemática verdadeira! O bloco destrava e obedece à física para ser empurrado
                 rb.isKinematic = false; 
-                
-                // Avisa o Otto para tocar a animação de empurrar
-                collision.gameObject.GetComponent<Player>().SetPushing(true);
             }
             else
             {
-                // Matemática falsa! O bloco trava como uma parede
-                TravarBloco(collision.gameObject);
-
-                // Feedback visual de erro (Pisca vermelho)
-                if (!isBlinking) StartCoroutine(PiscarErro());
+                // Matemática falsa! O bloco continua travado como uma parede
+                rb.isKinematic = true;
+                rb.velocity = Vector2.zero; // Evita qualquer deslize
             }
         }
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        // Quando o Otto se afasta, o bloco trava novamente e a animação para
+        // Quando o Otto solta a pedra e se afasta, o bloco trava e a animação de força para
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.layer == 9)
         {
-            TravarBloco(collision.gameObject);
+            rb.isKinematic = true;
+            rb.velocity = Vector2.zero;
+            collision.gameObject.GetComponent<Player>().SetPushing(false);
         }
-    }
-
-    void TravarBloco(GameObject player)
-    {
-        rb.isKinematic = true;
-        rb.velocity = Vector2.zero; // Para qualquer deslize residual instantaneamente
-        player.GetComponent<Player>().SetPushing(false); // Para a animação
     }
 
     bool ValidarExpressao(int valor1, TipoSinal sinal, int valor2)
@@ -89,16 +76,5 @@ public class MathBlock : MonoBehaviour
         if (sinal == TipoSinal.Maior) return valor1 > valor2;
         if (sinal == TipoSinal.Menor) return valor1 < valor2;
         return false;
-    }
-
-    IEnumerator PiscarErro()
-    {
-        isBlinking = true;
-        spriteRenderer.color = Color.red;
-        // Dica: Aqui você pode adicionar um AudioSource tocando som de erro (bloqueado)
-        yield return new WaitForSeconds(0.2f);
-        spriteRenderer.color = corOriginal;
-        yield return new WaitForSeconds(0.2f);
-        isBlinking = false;
     }
 }
