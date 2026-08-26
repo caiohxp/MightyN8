@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
     public float punchRadius = 0.5f; // Tamanho da área de impacto do soco
     public LayerMask enemyLayer;
 
+    public bool isPushing = false;
+
     private Animator anim;
 
     // Start is called before the first frame update
@@ -320,5 +322,20 @@ public class Player : MonoBehaviour
         if (punchPoint == null) return;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(punchPoint.position, punchRadius);
+    }
+
+    public void SetPushing(bool empurrando)
+    {
+        // Só empurra se estiver tentando andar na direção do bloco
+        if (empurrando && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f)
+        {
+            isPushing = true;
+            anim.SetBool("push", true);
+        }
+        else
+        {
+            isPushing = false;
+            anim.SetBool("push", false);
+        }
     }
 }
