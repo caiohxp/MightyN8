@@ -61,6 +61,7 @@
     <Compile Include="Assets\Script\Bomber.cs" />
     <Compile Include="Assets\Script\Chaser.cs" />
     <Compile Include="Assets\Script\Enemy.cs" />
+    <Compile Include="Assets\Script\MathBlock.cs" />
     <Compile Include="Assets\Script\Bullets.cs" />
     <Compile Include="Assets\Script\HUD.cs" />
     <Compile Include="Assets\Menu\soundManager.cs" />
