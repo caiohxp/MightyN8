@@ -14,6 +14,16 @@ public class Player : MonoBehaviour
     public bool doubleJump;
     bool isShooting = false;
 
+    public Transform groundCheck; // Objeto vazio no pé do personagem
+    public float groundCheckRadius = 0.2f; // Tamanho do radar
+    public LayerMask groundLayer; // Quais layers são consideradas "chão" (ex: Chão, Bloco Matemático, Plataforma)
+    private bool isGrounded;
+    public float groundGraceTime = 0.06f;
+    public float ignoreGroundAfterJump = 0.10f;
+
+    private float lastGroundedTime = -999f;
+    private float ignoreGroundUntil = -999f;
+
     public GameObject bulletPlusPrefab;
     public GameObject bulletMinusPrefab;
     public float fireRate = 5;
@@ -53,56 +63,94 @@ public class Player : MonoBehaviour
     {
         if (!onFinalPlatform)
         {
+            CheckGround();
+
             if (!Input.GetButton("Fire3"))
                 Move();
+
             Jump();
             Shot();
             Punch();
         }
+
         if (PlayerData.instance.health <= 0)
         {
             GameController.instance.ShowGameOver();
-
             gameObject.SetActive(false);
+        }
+
+        if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.1f &&
+    Mathf.Abs(rig.velocity.x) < 0.05f)
+        {
+            AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+
+            Debug.LogWarning(
+                "PLAYER PARADO MESMO COM INPUT | " +
+                "Input: " + Input.GetAxisRaw("Horizontal") +
+                " | VelX: " + rig.velocity.x +
+                " | VelY: " + rig.velocity.y +
+                " | KBCounter: " + KBCounter +
+                " | Shooting: " + isShooting +
+                " | Punching: " + isPunching +
+                " | Pushing: " + isPushing +
+                " | Grounded: " + isGrounded +
+                " | Fire3: " + Input.GetButton("Fire3") +
+                " | Animator: " + state.shortNameHash
+            );
         }
     }
 
     void Move()
     {
-        if (!isShooting && !isPunching)
+        // PRIMEIRO: Knockback tem prioridade absoluta
+        if (KBCounter > 0)
         {
-            if (KBCounter <= 0)
-            {
-                // MÁGICA AQUI: Checa se está empurrando. Se sim, usa a velocidade lenta!
-                float velocidadeAtual = isPushing ? pushSpeed : Speed;
-                
-                rig.velocity = new Vector2(Input.GetAxis("Horizontal") * velocidadeAtual, rig.velocity.y);
-            }
+            if (KnockFromRight)
+                rig.velocity = new Vector2(-KBForce, KBForce);
             else
-            {
-                if (KnockFromRight)
-                    rig.velocity = new Vector2(-KBForce, KBForce);
-                else
-                    rig.velocity = new Vector2(KBForce, KBForce);
-                KBCounter -= Time.deltaTime;
-            }
-            
-            // Controle de animação de caminhada normal
-            if (Input.GetAxis("Horizontal") > 0f)
-            {
-                // Se estiver empurrando, não toca a animação de walk, deixa a de push assumir
-                anim.SetBool("walk", !isPushing); 
-                transform.eulerAngles = new Vector3(0f, 0f, 0f);
-            }
-            else if (Input.GetAxis("Horizontal") < 0f)
-            {
-                anim.SetBool("walk", !isPushing);
-                transform.eulerAngles = new Vector3(0f, 180f, 0f);
-            }
-            else if (Input.GetAxis("Horizontal") == 0f)
-            {
-                anim.SetBool("walk", false);
-            }
+                rig.velocity = new Vector2(KBForce, KBForce);
+
+            KBCounter -= Time.deltaTime;
+
+            anim.SetBool("walk", false);
+
+            return;
+        }
+
+        // SEGUNDO: ataques impedem movimento normal
+        if (isShooting || isPunching)
+        {
+            anim.SetBool("walk", false);
+            return;
+        }
+
+        // MOVIMENTO NORMAL
+        float horizontal = Input.GetAxisRaw("Horizontal");
+
+        float velocidadeAtual =
+            isPushing ? pushSpeed : Speed;
+
+        rig.velocity = new Vector2(
+            horizontal * velocidadeAtual,
+            rig.velocity.y
+        );
+
+        bool shouldWalk =
+            Mathf.Abs(horizontal) > 0.01f &&
+            isGrounded &&
+            !isPushing;
+
+        anim.SetBool("walk", shouldWalk);
+
+        if (horizontal > 0f)
+        {
+            transform.eulerAngles =
+                new Vector3(0f, 0f, 0f);
+        }
+        else if (horizontal < 0f)
+        {
+            transform.eulerAngles =
+                new Vector3(0f, 180f, 0f);
         }
     }
 
@@ -112,21 +160,89 @@ public class Player : MonoBehaviour
         {
             isShooting = false;
             isPunching = false;
-            if (!isJumping)
+
+            if (isGrounded)
             {
-                rig.AddForce(Vector3.up * JumpForce, ForceMode2D.Impulse);
-                doubleJump = true;
+                // Evita que o GroundCheck ainda detecte o chão
+                // enquanto o personagem começa a subir.
+                ignoreGroundUntil =
+                    Time.time + ignoreGroundAfterJump;
+
+                lastGroundedTime = -999f;
+
+                isGrounded = false;
+                isJumping = true;
+
                 anim.SetBool("walk", false);
+                anim.SetBool("jump", true);
+
+                // Zera movimento vertical anterior
+                rig.velocity =
+                    new Vector2(rig.velocity.x, 0);
+
+                rig.AddForce(
+                    Vector2.up * JumpForce,
+                    ForceMode2D.Impulse
+                );
+
                 anim.SetTrigger("TriggerJump");
             }
-            else
+            else if (doubleJump)
             {
-                if (doubleJump)
-                {
-                    rig.AddForce(Vector3.up * JumpForce * 0.7f, ForceMode2D.Impulse);
-                    doubleJump = false;
-                }
+                doubleJump = false;
+
+                rig.velocity =
+                    new Vector2(rig.velocity.x, 0);
+
+                rig.AddForce(
+                    Vector2.up * JumpForce * 0.7f,
+                    ForceMode2D.Impulse
+                );
+
+                anim.SetBool("walk", false);
+                anim.SetBool("jump", true);
+
+                anim.SetTrigger("TriggerJump");
             }
+        }
+    }
+
+    void CheckGround()
+    {
+        bool touchingGround = Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayer
+        );
+
+        // Acabou de pular:
+        // ignora o chão por alguns milissegundos
+        if (Time.time < ignoreGroundUntil)
+        {
+            isGrounded = false;
+        }
+        else
+        {
+            if (touchingGround)
+            {
+                lastGroundedTime = Time.time;
+            }
+
+            // Pequena tolerância caso o GroundCheck perca contato
+            // por 1 ou 2 frames.
+            isGrounded =
+                Time.time - lastGroundedTime <= groundGraceTime;
+        }
+
+        isJumping = !isGrounded;
+
+        // A animação depende SOMENTE do estado grounded.
+        anim.SetBool("jump", !isGrounded);
+
+        // Só recupera o segundo pulo quando realmente voltou ao chão.
+        if (isGrounded)
+        {
+            doubleJump = true;
         }
     }
 
@@ -135,10 +251,10 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Fire1") && nextFire < Time.time)
         {
             isShooting = true;
-            
+
             // Freia o personagem no eixo X instantaneamente
-            rig.velocity = new Vector2(0, rig.velocity.y); 
-            
+            rig.velocity = new Vector2(0, rig.velocity.y);
+
             anim.SetTrigger("ShootPlus");
             // Invoke("SpawnPlusProjectile", 0.15f);
             nextFire = Time.time + fireRate;
@@ -147,10 +263,10 @@ public class Player : MonoBehaviour
         // if (Input.GetButtonDown("Fire2") && nextFire < Time.time)
         // {
         //     isShooting = true;
-            
+
         //     // Freia o personagem no eixo X instantaneamente
         //     rig.velocity = new Vector2(0, rig.velocity.y); 
-            
+
         //     anim.SetTrigger("ShootMinus");
         //     Invoke("SpawnMinusProjectile", 0.15f);
         //     Invoke("EndShot", fireRate);
@@ -218,39 +334,66 @@ public class Player : MonoBehaviour
 
     void KnockBack(float playerPosition, float collisionPosition)
     {
+        isPunching = false;
+        isShooting = false;
+        isPushing = false;
+
+        anim.SetBool("walk", false);
+        anim.SetBool("push", false);
+        anim.ResetTrigger("TriggerPunch");
+        anim.ResetTrigger("ShootPlus");
         KBCounter = KBTotalTime;
+
         if (playerPosition <= collisionPosition)
+        {
             KnockFromRight = true;
+
+            rig.velocity = new Vector2(
+                -KBForce,
+                KBForce
+            );
+        }
         else
+        {
             KnockFromRight = false;
+
+            rig.velocity = new Vector2(
+                KBForce,
+                KBForce
+            );
+        }
+
+        anim.SetBool("walk", false);
+        anim.SetBool("push", false);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
-{
-    // Enquanto estiver socando, Oito não recebe dano por contato
-    if (!isPunching &&
-        (collision.gameObject.layer == 9 || collision.gameObject.layer == 8))
     {
-        PlayerData.instance.health--;
 
-        KnockBack(
-            transform.position.x,
-            collision.transform.position.x
-        );
+        // Enquanto estiver socando, Oito não recebe dano por contato
+        if (!isPunching &&
+            (collision.gameObject.layer == 9 || collision.gameObject.layer == 8))
+        {
+            PlayerData.instance.health--;
 
-        StartCoroutine(HitedCoRoutine());
+            KnockBack(
+                transform.position.x,
+                collision.transform.position.x
+            );
+
+            StartCoroutine(HitedCoRoutine());
+        }
+
+        if (collision.gameObject.layer == 8)
+        {
+            collision.gameObject.SetActive(false);
+        }
+
+        if (collision.gameObject.layer == 15)
+        {
+            PlayerData.instance.health = 0;
+        }
     }
-
-    if (collision.gameObject.layer == 8)
-    {
-        collision.gameObject.SetActive(false);
-    }
-
-    if (collision.gameObject.layer == 15)
-    {
-        PlayerData.instance.health = 0;
-    }
-}
     private void OnTriggerEnter2D(Collider2D collision)
     {
         FloorBlock fb = collision.gameObject.GetComponent<FloorBlock>();
@@ -267,11 +410,6 @@ public class Player : MonoBehaviour
                 PlayerData.instance.health--;
                 StartCoroutine(HitedCoRoutine());
             }
-        }
-        if (collision.gameObject.layer == 13)
-        {
-            isJumping = false;
-            anim.SetBool("jump", false);
         }
 
         if (collision.gameObject.layer == 14)
@@ -296,11 +434,6 @@ public class Player : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 13)
-        {
-            isJumping = true;
-            anim.SetBool("jump", true);
-        }
         if (collision.gameObject.layer == 14)
         {
             onFinalPlatform = false;

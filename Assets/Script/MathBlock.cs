@@ -5,12 +5,12 @@ public class MathBlock : MonoBehaviour
     public enum TipoSinal { Igual, Maior, Menor }
 
     [Header("Matemática do Bloco")]
-    public int valorDoBloco; // Ex: 8, 9, 7
+    public int valorDoBloco; 
     public TipoSinal sinalEsquerdo;
     public TipoSinal sinalDireito;
     
     [Header("Status do Jogador")]
-    public int valorDoPlayer = 8; // O valor fixo do Oito
+    public int valorDoPlayer = 8; 
 
     private Rigidbody2D rb;
 
@@ -18,54 +18,63 @@ public class MathBlock : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         
-        // O bloco começa fisicamente travado (ancorado)
-        rb.isKinematic = true; 
+        // Substituímos o isKinematic!
+        // O bloco começa com o Eixo X e a Rotação travados. A gravidade (Y) continua funcionando!
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
     }
 
     void OnCollisionStay2D(Collision2D collision)
     {
-        // Se quem encostou foi o jogador...
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.layer == 9)
         {
-            // O Otto SEMPRE tenta empurrar visualmente quando encosta, independente da matemática
-            collision.gameObject.GetComponent<Player>().SetPushing(true);
 
-            // Descobre de que lado o Otto está batendo
-            bool ottoEstaNaEsquerda = collision.transform.position.x < transform.position.x;
-            bool expressaoCorreta = false;
+            ContactPoint2D contato = collision.GetContact(0);
 
-            if (ottoEstaNaEsquerda)
-            {
-                // Lógica da Esquerda: (Valor do Otto) [Sinal Esquerdo] (Valor do Bloco)
-                expressaoCorreta = ValidarExpressao(valorDoPlayer, sinalEsquerdo, valorDoBloco);
-            }
-            else
-            {
-                // Lógica da Direita: (Valor do Bloco) [Sinal Direito] (Valor do Otto)
-                expressaoCorreta = ValidarExpressao(valorDoBloco, sinalDireito, valorDoPlayer);
-            }
+            bool bateuNaLateral = Mathf.Abs(contato.normal.x) > 0.5f;
 
-            if (expressaoCorreta)
-            {
-                // Matemática verdadeira! O bloco destrava e obedece à física para ser empurrado
-                rb.isKinematic = false; 
+            if(bateuNaLateral){
+
+                collision.gameObject.GetComponent<Player>().SetPushing(true);
+
+                bool ottoEstaNaEsquerda = collision.transform.position.x < transform.position.x;
+                bool expressaoCorreta = false;
+
+                if (ottoEstaNaEsquerda)
+                {
+                    expressaoCorreta = ValidarExpressao(valorDoPlayer, sinalEsquerdo, valorDoBloco);
+                }
+                else
+                {
+                    expressaoCorreta = ValidarExpressao(valorDoBloco, sinalDireito, valorDoPlayer);
+                }
+
+                if (expressaoCorreta)
+                {
+                    // Matemática verdadeira! Destrava o eixo X para ser empurrado, mas não deixa rolar (FreezeRotation)
+                    rb.constraints = RigidbodyConstraints2D.FreezeRotation; 
+                }
+                else
+                {
+                    // Matemática falsa! Trava o Eixo X como uma parede
+                    rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+                    
+                    // Zera apenas a velocidade horizontal, mantendo a queda (Y) intacta
+                    rb.velocity = new Vector2(0, rb.velocity.y); 
+                }
+            } else {
+                collision.gameObject.GetComponent<Player>().SetPushing(false);
+                rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
             }
-            else
-            {
-                // Matemática falsa! O bloco continua travado como uma parede
-                rb.isKinematic = true;
-                rb.velocity = Vector2.zero; // Evita qualquer deslize
-            }
-        }
+        } 
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        // Quando o Otto solta a pedra e se afasta, o bloco trava e a animação de força para
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.layer == 9)
         {
-            rb.isKinematic = true;
-            rb.velocity = Vector2.zero;
+            // Quando soltar a pedra, trava o eixo X novamente
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            rb.velocity = new Vector2(0, rb.velocity.y);
             collision.gameObject.GetComponent<Player>().SetPushing(false);
         }
     }
