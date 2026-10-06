@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class DangerBlock : MonoBehaviour
+public class DangerBlock : MonoBehaviour, IAtingivel
 {
     public float varValue;
     public int symbolValue;
@@ -102,5 +102,10 @@ public class DangerBlock : MonoBehaviour
         operationSprite.color = Color.white;
         symbolSprite.color = Color.white;
         varSprite.color = Color.white;
+    }
+
+    public void ReceberDano(int dano, bool atingidoPelaEsquerda)
+    {
+        Hited(dano);
     }
 }

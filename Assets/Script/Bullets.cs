@@ -10,6 +10,7 @@ public class Bullets : MonoBehaviour
     private float next = 0;
     private float rate = 0.1f;
     Vector3 initialPosition;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,32 +26,12 @@ public class Bullets : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-        DangerBlock db = collision.gameObject.GetComponent<DangerBlock>();
-        DestructBlock block = collision.gameObject.GetComponent<DestructBlock>();
-        if (enemy != null)
+        IAtingivel alvo = collision.gameObject.GetComponent<IAtingivel>();
+        if (alvo != null)
         {
-            Vector3 impactDirection = collision.transform.position - initialPosition;
-            UnityEngine.Debug.Log(impactDirection);
-
-            if (impactDirection.x < 0 && !collision.CompareTag("Shooter"))
-            {
-                // Acertou pela direita
-                enemy.HitedFromRight(damage);
-            }
-            else
-            {
-                // Acertou pela esquerda
-                enemy.HitedFromLeft(damage);
-            }
-        } else if(block != null){
-            UnityEngine.Debug.Log("X");
-            block.Hited(damage);
-        } else if(db != null && next < Time.time){
-            next = rate + Time.time;
-            db.Hited(damage);
+            bool atingidoPelaEsquerda = (collision.transform.position.x - initialPosition.x) > 0;
+            alvo.ReceberDano(damage, atingidoPelaEsquerda);
+            Destroy(gameObject);
         }
-        UnityEngine.Debug.Log(gameObject);
-        Destroy(gameObject);
     }
 }

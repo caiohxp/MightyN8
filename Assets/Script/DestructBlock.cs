@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class DestructBlock : MonoBehaviour
+public class DestructBlock : MonoBehaviour, IAtingivel
 {
     public int varValue;
     public int expressionValue;
@@ -67,5 +67,10 @@ public class DestructBlock : MonoBehaviour
         constSprite.color = Color.white;
         symbolSprite.color = Color.white;
         varSprite.color = Color.white;
+    }
+
+    public void ReceberDano(int dano, bool atingidoPelaEsquerda)
+    {
+        Hited(dano);
     }
 }

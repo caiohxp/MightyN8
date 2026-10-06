@@ -59,20 +59,26 @@
   <ItemGroup>
     <Compile Include="Assets\Script\ConditionalPlatform.cs" />
     <Compile Include="Assets\Script\Bomber.cs" />
+    <Compile Include="Assets\Script\PlayerCombat.cs" />
     <Compile Include="Assets\Script\Chaser.cs" />
     <Compile Include="Assets\Script\Enemy.cs" />
     <Compile Include="Assets\Script\MathBlock.cs" />
     <Compile Include="Assets\Script\Bullets.cs" />
     <Compile Include="Assets\Script\HUD.cs" />
     <Compile Include="Assets\Menu\soundManager.cs" />
+    <Compile Include="Assets\Script\PlayerHealth.cs" />
+    <Compile Include="Assets\Script\FeedbackBlock.cs" />
     <Compile Include="Assets\Script\CameraPlayer.cs" />
+    <Compile Include="Assets\Script\PlatformQuiz.cs" />
     <Compile Include="Assets\Menu\sound.cs" />
+    <Compile Include="Assets\Script\IAtingivel.cs" />
     <Compile Include="Assets\Script\CalcNota.cs" />
     <Compile Include="Assets\Script\Counters.cs" />
     <Compile Include="Assets\Script\PersistentManager.cs" />
     <Compile Include="Assets\Script\DangerBlock.cs" />
     <Compile Include="Assets\Script\FloorBlock.cs" />
     <Compile Include="Assets\Script\Blocks.cs" />
+    <Compile Include="Assets\Script\PlayerMove.cs" />
     <Compile Include="Assets\Script\InstantiatePrefab.cs" />
     <Compile Include="Assets\Menu\menuPrincipalManager.cs" />
     <Compile Include="Assets\Script\PlayerData.cs" />

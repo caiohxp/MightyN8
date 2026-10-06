@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IAtingivel
 {
     public float areaX = 5f;
     protected bool movingRight = true; 
@@ -196,5 +196,17 @@ public class Enemy : MonoBehaviour
     }
     void OnTriggerExit2D(Collider2D collision){
         if(collision.gameObject.layer == 13) onFloor = false;
+    }
+
+    public void ReceberDano(int dano, bool atingidoPelaEsquerda)
+    {
+        if (atingidoPelaEsquerda)
+        {
+            HitedFromLeft(dano);
+        }
+        else
+        {
+            HitedFromRight(dano);
+        }
     }
 }
