@@ -18,8 +18,6 @@ public class Bomber : Enemy
         rageSpeed = speed * 3;
         if(symbolValue == 1){
             transform.eulerAngles = new Vector3(0f, 180f, 0f);
-            leftCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
-            rightCounterTransform.eulerAngles = new Vector3(0f, 0f,0f);
         }
     }
 

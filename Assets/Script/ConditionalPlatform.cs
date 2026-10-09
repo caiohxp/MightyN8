@@ -1,97 +1,199 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro; 
 
 public class ConditionalPlatform : MonoBehaviour
 {
-    public enum SimboloMatematico { MaiorQue, MenorQue, Igual }
-    
-    [Header("Matemática da Plataforma")]
-    public SimboloMatematico simbolo;
+    public enum TipoPlataforma { Normal, Intangivel, Magnetica }
+
+    [Header("Configuração Geral")]
+    public TipoPlataforma tipoPlataforma;
+    public MathEvaluator.Simbolo simbolo;
     public int valorDaPlataforma; 
     public int valorDoPlayer = 8; 
 
-    [Header("Comportamento de Destruição")]
-    public bool seDestroiComErro = true; // Se for falso, ela só fica invisível como antes
-    public float tempoAteDestruir = 0.5f; // Quanto tempo o Oito consegue ficar em pé antes dela quebrar
-    private bool jaEstaQuebrando = false;
+    [Header("Valor Dinâmico (Variável)")]
+    [Tooltip("Marque para o valor da plataforma mudar sozinho com o tempo")]
+    public bool valorMudaSozinho = false;
+    [Tooltip("Quanto soma (ou subtrai se for número negativo) por segundo")]
+    public int variacaoPorSegundo = 1;
 
-    [Header("Visual")]
+    public bool limitarValor = false;
+    public int limiteInferior = 0;
+    public int limiteSuperior = 10;
+    
+    private float cronometro = 0f;
+    private bool ottoEstaEmCima = false;
+
+    [Header("Visual Geral")]
     public TextMeshPro textoExpressao; 
     public float transparenciaFantasma = 0.4f; 
 
+    [Header("Apenas: Plataforma Normal")]
+    public bool seDestroiComErro = true; 
+    public float tempoAteDestruir = 0.5f; 
+
+    [Header("Apenas: Plataforma Magnética")]
+    public LayerMask playerLayer; 
+    public float magnetForceMultiplier = 0.9f;
+
     private Collider2D coll;
     private SpriteRenderer sprite;
-    private Animator anim; // Novo componente para tocar a animação!
+    private Animator anim; 
+    
+    private bool jaEstaQuebrando = false;
+    private bool imaAtivo = false;
 
     void Start()
     {
         coll = GetComponent<Collider2D>();
         sprite = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>(); // Pega o Animator que você vai colocar nela
+        anim = GetComponent<Animator>(); 
         
-        AtualizarPlataforma(false); // Roda sem verificar colisão no Start
+        AtualizarPlataforma(false); 
     }
 
-    // Chamamos a função normal, mas agora passamos um aviso se o Oito pisou nela
+    void Update()
+    {
+        // Se a opção estiver ligada e a plataforma ainda estiver inteira, conta o tempo
+        if (valorMudaSozinho && !jaEstaQuebrando)
+        {
+            cronometro += Time.deltaTime;
+            
+            // A cada 1 segundo exato:
+            if (cronometro >= 1f)
+            {
+                cronometro = 0f;
+                valorDaPlataforma += variacaoPorSegundo;
+                
+                if(limitarValor)
+                {
+                    if(valorDaPlataforma <= limiteInferior) variacaoPorSegundo *= -1;
+                    if(valorDaPlataforma >= limiteSuperior) variacaoPorSegundo *= -1;
+                }
+
+                // Atualiza o texto e a física passando o estado real do Otto
+                AtualizarPlataforma(ottoEstaEmCima);
+            }
+        }
+    }
+
     public void AtualizarPlataforma(bool ottoPisou)
     {
-        if (jaEstaQuebrando) return; // Se já começou a quebrar, ignora a matemática!
+        if (jaEstaQuebrando) return; 
 
         if (textoExpressao != null)
         {
             string stringSimbolo = "";
-            if (simbolo == SimboloMatematico.MaiorQue) stringSimbolo = ">";
-            else if (simbolo == SimboloMatematico.MenorQue) stringSimbolo = "<";
-            else if (simbolo == SimboloMatematico.Igual) stringSimbolo = "=";
-
-            textoExpressao.text = stringSimbolo + " " + valorDaPlataforma.ToString();
+            if (simbolo == MathEvaluator.Simbolo.Maior) stringSimbolo = ">";
+            else if (simbolo == MathEvaluator.Simbolo.Menor) stringSimbolo = "<";
+            else if (simbolo == MathEvaluator.Simbolo.Igual) stringSimbolo = "=";
+            
+            textoExpressao.text = valorDaPlataforma.ToString();
         }
 
-        bool expressaoCorreta = false;
+        bool expressaoCorreta = MathEvaluator.Validar(valorDoPlayer, simbolo, valorDaPlataforma);
 
-        switch (simbolo)
+        switch (tipoPlataforma)
         {
-            case SimboloMatematico.MaiorQue: expressaoCorreta = valorDoPlayer > valorDaPlataforma; break;
-            case SimboloMatematico.MenorQue: expressaoCorreta = valorDoPlayer < valorDaPlataforma; break;
-            case SimboloMatematico.Igual: expressaoCorreta = valorDoPlayer == valorDaPlataforma; break;
+            case TipoPlataforma.Normal:
+                ComportamentoNormal(expressaoCorreta, ottoPisou);
+                break;
+            case TipoPlataforma.Intangivel:
+                ComportamentoIntangivel(expressaoCorreta, ottoPisou);
+                break;
+            case TipoPlataforma.Magnetica:
+                ComportamentoMagnetico(expressaoCorreta);
+                break;
         }
+    }
 
-        if (expressaoCorreta)
+    void ComportamentoNormal(bool correta, bool pisou)
+    {
+        if (correta)
         {
-            // Matemática certa! Sempre fica sólida e normal.
             coll.enabled = true; 
             if (sprite != null) sprite.color = new Color(1f, 1f, 1f, 1f); 
         }
         else
         {
-            // Matemática errada!
             if (seDestroiComErro)
             {
-                // É um bloco de destruição!
-                if (ottoPisou)
-                {
-                    // Otto caiu na armadilha, inicia a destruição!
-                    StartCoroutine(RotinaDeDestruicao());
-                }
+                if (pisou) StartCoroutine(RotinaDeDestruicao());
                 else
                 {
-                    // Otto ainda não pisou. Fica SÓLIDO para enganar o jogador!
                     coll.enabled = true; 
                     if (sprite != null) sprite.color = new Color(1f, 1f, 1f, 1f); 
                 }
             }
             else
             {
-                // É um bloco clássico fantasma. Fica intangível desde o começo.
                 coll.enabled = false; 
                 if (sprite != null) sprite.color = new Color(1f, 1f, 1f, transparenciaFantasma); 
             }
         }
     }
 
-    // A mágica de destruir e desmoronar
+    void ComportamentoIntangivel(bool correta, bool pisou)
+    {
+        if (correta)
+        {
+            coll.enabled = true;
+            if (sprite != null) sprite.color = new Color(1f, 1f, 1f, pisou ? 1f : transparenciaFantasma);
+        }
+        else
+        {
+            coll.enabled = false;
+            if (sprite != null) sprite.color = new Color(1f, 1f, 1f, transparenciaFantasma);
+        }
+    }
+
+    void ComportamentoMagnetico(bool correta)
+    {
+        coll.enabled = true;
+        if (sprite != null) sprite.color = new Color(1f, 1f, 1f, 1f);
+        
+        imaAtivo = !correta;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
+        {
+            ottoEstaEmCima = true; // Avisa o sistema que o Otto subiu
+            
+            if (tipoPlataforma == TipoPlataforma.Normal || tipoPlataforma == TipoPlataforma.Intangivel)
+            {
+                coll.enabled = true; 
+                AtualizarPlataforma(true); 
+            }
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
+        {
+            ottoEstaEmCima = false; // Avisa o sistema que o Otto saiu
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (tipoPlataforma == TipoPlataforma.Magnetica && imaAtivo)
+        {
+            if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
+            {
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                
+                if (playerRb != null && playerRb.velocity.y > 0.1f)
+                {
+                    playerRb.velocity = new Vector2(playerRb.velocity.x, playerRb.velocity.y * (1f - magnetForceMultiplier));
+                }
+            }
+        }
+    }
+
     IEnumerator RotinaDeDestruicao()
     {
         jaEstaQuebrando = true;
@@ -101,33 +203,18 @@ public class ConditionalPlatform : MonoBehaviour
 
     public void DesativarColisor()
     {
-        coll.enabled = false; // O chão fica intangível e o Otto cai instantaneamente
+        coll.enabled = false; 
     }
 
-    // Chame este método no FRAME 9 (último frame) da animação
     public void FinalizarDestruicao()
     {
-        gameObject.SetActive(false); // O objeto da plataforma some da tela de vez
-    }
-
-    // Quando o Otto encosta na plataforma (Pisou!)
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        Debug.Log("Algo bateu na plataforma: " + collision.gameObject.name);
-        // Se quem bateu for o Player (layer 9 ou tag "Player")
-        if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("O Otto pisou! Mandando o sinal de quebrar!");
-            // Força ela a ligar a colisão rapidamente para ele encostar e logo manda a checagem
-            coll.enabled = true; 
-            AtualizarPlataforma(true); // O 'true' avisa que o Otto pisou!
-        }
+        gameObject.SetActive(false); 
     }
 
     public void ReceberTiro(int danoDaBala)
     {
         if (jaEstaQuebrando) return;
         valorDaPlataforma += danoDaBala;
-        AtualizarPlataforma(false); 
+        AtualizarPlataforma(ottoEstaEmCima); 
     }
 }

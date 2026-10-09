@@ -1,51 +1,71 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Chaser : Enemy
 {
     private float normalSpeed;
     private float rageSpeed;
-    // Start is called before the first frame update
-    void Start()
+
+    protected override void Awake()
     {
+        base.Awake(); // Crucial: Puxa o rb2d, anim e o target da classe Enemy
         normalSpeed = speed;
         rageSpeed = speed * 2;
     }
 
-    // Update is called once per frame
-    protected override void Update()
+    void Start()
     {
-        base.Update();
         if(symbolValue == 0){
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
-            leftCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
-            rightCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
         } else if(symbolValue == 1){
             transform.eulerAngles = new Vector3(0f, 180f, 0f);
-            leftCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
-            rightCounterTransform.eulerAngles = new Vector3(0f, 0f, 0f);
-        }
-        if(onFloor){
-            if (targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && !player.isJumping && targetDistanceY < attackDistanceY && targetDistanceY > -attackDistanceY  && !solved){
-                speed = rageSpeed;
-                Vector3 targetPosition = new Vector3(target.transform.position.x, transform.position.y, transform.position.z);
-                Vector3 moveDirection = (targetPosition - transform.position).normalized;
-                rb2d.velocity = moveDirection * speed;
-                minX = transform.position.x - areaX;
-                maxX = transform.position.x + areaX;
-            }else{
-                speed = normalSpeed;
-                Move();
-                if(symbolValue == 0){
-                    anim.SetBool("right", movingRight ? true : false);
-                    anim.SetBool("left", movingRight ? false : true);
-                } else if(symbolValue == 1){
-                    anim.SetBool("right", movingRight ? false : true);
-                    anim.SetBool("left", movingRight ? true : false);
-                }
-            }
         }
     }
 
+    protected override void Update()
+    {
+        base.Update(); // Crucial: Calcula targetDistanceX e targetDistanceY]
+        if (isKnockedDown) return;
+
+        if (onFloor)
+        {
+            // Checa se o alvo está dentro da caixa de ataque (ignorando se está pulando para simplificar e evitar bugs)
+            bool alvoPertoX = Mathf.Abs(targetDistanceX) < attackDistanceX;
+            bool alvoPertoY = Mathf.Abs(targetDistanceY) < attackDistanceY;
+
+            if (alvoPertoX && alvoPertoY && !solved)
+            {
+                // MODO PERSEGUIÇÃO
+                speed = rageSpeed;
+                
+                Vector3 targetPosition = new Vector3(target.position.x, transform.position.y, transform.position.z);
+                Vector3 moveDirection = (targetPosition - transform.position).normalized;
+                
+                rb2d.velocity = moveDirection * speed;
+
+                // Atualiza a âncora da patrulha para onde ele perseguiu
+                minX = transform.position.x - areaX;
+                maxX = transform.position.x + areaX;
+                
+                movingRight = moveDirection.x > 0;
+            }
+            else
+            {
+                // MODO PATRULHA
+                speed = normalSpeed;
+                Move();
+            }
+
+            // Controle da Animação baseado no sinal
+            if (symbolValue == 0)
+            {
+                anim.SetBool("right", movingRight);
+                anim.SetBool("left", !movingRight);
+            }
+            else if (symbolValue == 1)
+            {
+                anim.SetBool("right", !movingRight);
+                anim.SetBool("left", movingRight);
+            }
+        }
+    }
 }

@@ -8,15 +8,11 @@ public class Shooter : Enemy
     public Transform shotEnemySpawner;
     public float fireRate = 5;
     public float nextFire = 0;
-    private Vector3 startOffset;
-    private Vector3 startOffset2;
 
     public bool knockedFromLeft = false;
 
     void Start()
     {
-        startOffset = offset;
-        startOffset2 = offset2;
         attackDistanceY = 4;
     }
 
@@ -40,13 +36,9 @@ public class Shooter : Enemy
             if (targetDistanceX < 0) {
                 transform.eulerAngles = new Vector3(0f, 180f, 0f);
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 0f, 0f);
-                offset.x = startOffset.x + 0.3f;
-                offset2.x = startOffset2.x + 0.3f;
             } else {
                 transform.eulerAngles = new Vector3(0f, 0f, 0f);
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 180f, 0f);
-                offset.x = startOffset.x + 0.3f;
-                offset2.x = startOffset2.x + 0.3f;
             }
 
             anim.SetBool("shoot", true);
@@ -56,8 +48,6 @@ public class Shooter : Enemy
         else
         {
             Move();
-            offset.x = startOffset.x;
-            offset2.x = startOffset2.x;
             anim.SetBool("shoot", false);
             anim.SetBool("walk", true);
             
