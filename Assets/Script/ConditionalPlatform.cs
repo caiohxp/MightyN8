@@ -10,20 +10,18 @@ public class ConditionalPlatform : MonoBehaviour
     public TipoPlataforma tipoPlataforma;
     public MathEvaluator.Simbolo simbolo;
     public int valorDaPlataforma; 
-    public int valorDoPlayer = 8; 
+
+    // VARIÁVEL PRIVADA: O valor base é 8, mas muda dinamicamente se uma pedra/caixa pisar aqui
+    private int valorObjetoEmCima = 8; 
 
     [Header("Valor Dinâmico (Variável)")]
-    [Tooltip("Marque para o valor da plataforma mudar sozinho com o tempo")]
     public bool valorMudaSozinho = false;
-    [Tooltip("Quanto soma (ou subtrai se for número negativo) por segundo")]
     public int variacaoPorSegundo = 1;
-
     public bool limitarValor = false;
     public int limiteInferior = 0;
     public int limiteSuperior = 10;
-    
     private float cronometro = 0f;
-    private bool ottoEstaEmCima = false;
+    private bool objetoEstaEmCima = false; // Renomeado para abranger tanto o Otto quanto Caixas
 
     [Header("Visual Geral")]
     public TextMeshPro textoExpressao; 
@@ -55,30 +53,27 @@ public class ConditionalPlatform : MonoBehaviour
 
     void Update()
     {
-        // Se a opção estiver ligada e a plataforma ainda estiver inteira, conta o tempo
         if (valorMudaSozinho && !jaEstaQuebrando)
         {
             cronometro += Time.deltaTime;
             
-            // A cada 1 segundo exato:
             if (cronometro >= 1f)
             {
                 cronometro = 0f;
                 valorDaPlataforma += variacaoPorSegundo;
-                
+
                 if(limitarValor)
                 {
                     if(valorDaPlataforma <= limiteInferior) variacaoPorSegundo *= -1;
                     if(valorDaPlataforma >= limiteSuperior) variacaoPorSegundo *= -1;
                 }
 
-                // Atualiza o texto e a física passando o estado real do Otto
-                AtualizarPlataforma(ottoEstaEmCima);
+                AtualizarPlataforma(objetoEstaEmCima);
             }
         }
     }
 
-    public void AtualizarPlataforma(bool ottoPisou)
+    public void AtualizarPlataforma(bool temObjetoPisando)
     {
         if (jaEstaQuebrando) return; 
 
@@ -92,15 +87,16 @@ public class ConditionalPlatform : MonoBehaviour
             textoExpressao.text = valorDaPlataforma.ToString();
         }
 
-        bool expressaoCorreta = MathEvaluator.Validar(valorDoPlayer, simbolo, valorDaPlataforma);
+        // A MÁGICA ACONTECE AQUI: A plataforma agora julga o "valorObjetoEmCima" em vez de um número fixo
+        bool expressaoCorreta = MathEvaluator.Validar(valorObjetoEmCima, simbolo, valorDaPlataforma);
 
         switch (tipoPlataforma)
         {
             case TipoPlataforma.Normal:
-                ComportamentoNormal(expressaoCorreta, ottoPisou);
+                ComportamentoNormal(expressaoCorreta, temObjetoPisando);
                 break;
             case TipoPlataforma.Intangivel:
-                ComportamentoIntangivel(expressaoCorreta, ottoPisou);
+                ComportamentoIntangivel(expressaoCorreta, temObjetoPisando);
                 break;
             case TipoPlataforma.Magnetica:
                 ComportamentoMagnetico(expressaoCorreta);
@@ -158,23 +154,51 @@ public class ConditionalPlatform : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
+        ContactPoint2D contato = collision.GetContact(0);
+        bool pisouPorCima = contato.normal.y < -0.5f;
+
+        if (pisouPorCima)
         {
-            ottoEstaEmCima = true; // Avisa o sistema que o Otto subiu
-            
-            if (tipoPlataforma == TipoPlataforma.Normal || tipoPlataforma == TipoPlataforma.Intangivel)
+            // 1. É o Otto pisando?
+            if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
             {
-                coll.enabled = true; 
-                AtualizarPlataforma(true); 
+                objetoEstaEmCima = true; 
+                valorObjetoEmCima = 8; // Força a identidade do Otto
+                
+                if (tipoPlataforma == TipoPlataforma.Normal || tipoPlataforma == TipoPlataforma.Intangivel)
+                {
+                    coll.enabled = true; 
+                    AtualizarPlataforma(true); 
+                }
+            }
+            // 2. É uma Pedra/Caixa pisando? (PREPARADO PARA O SEU NOVO SISTEMA)
+            else 
+            {
+                MathBlock caixaMatematica = collision.gameObject.GetComponent<MathBlock>();
+                if (caixaMatematica != null)
+                {
+                    objetoEstaEmCima = true;
+                    // A plataforma assume o valor do bloco de pedra que caiu nela!
+                    valorObjetoEmCima = caixaMatematica.valorDoBloco; 
+                    
+                    if (tipoPlataforma == TipoPlataforma.Normal || tipoPlataforma == TipoPlataforma.Intangivel)
+                    {
+                        coll.enabled = true; 
+                        AtualizarPlataforma(true); 
+                    }
+                }
             }
         }
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player"))
+        // Se o Otto ou uma Caixa saiu de cima da plataforma
+        if (collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player") || collision.gameObject.GetComponent<MathBlock>() != null)
         {
-            ottoEstaEmCima = false; // Avisa o sistema que o Otto saiu
+            objetoEstaEmCima = false; 
+            valorObjetoEmCima = 8; // Retorna o valor padrão para a plataforma voltar ao estado normal de "espera"
+            AtualizarPlataforma(false);
         }
     }
 
@@ -215,6 +239,6 @@ public class ConditionalPlatform : MonoBehaviour
     {
         if (jaEstaQuebrando) return;
         valorDaPlataforma += danoDaBala;
-        AtualizarPlataforma(ottoEstaEmCima); 
+        AtualizarPlataforma(objetoEstaEmCima); 
     }
 }

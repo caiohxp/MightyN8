@@ -7,6 +7,7 @@ public class PlayerMove : MonoBehaviour
     public float Speed = 10f;
     public float pushSpeed = 4f;
     public float JumpForce = 600f;
+    public float multiplicadorCortePulo = 0.5f;
     [HideInInspector] public bool isPushing = false;
 
     [Header("Detector de Chão")]
@@ -77,6 +78,7 @@ public class PlayerMove : MonoBehaviour
 
     void Jump()
     {
+        // 1. O Pulo Máximo (Aperta o botão)
         if (Input.GetButtonDown("Jump"))
         {
             if (combat != null) combat.CancelAttacks();
@@ -91,19 +93,24 @@ public class PlayerMove : MonoBehaviour
                 anim.SetBool("walk", false);
                 anim.SetBool("jump", true);
 
+                // Zera a velocidade vertical antes de aplicar a nova força para não acumular
                 rig.velocity = new Vector2(rig.velocity.x, 0);
+                
+                // Aplica a força total do pulo de uma vez só (Este é o limite máximo)
                 rig.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
+                
                 anim.SetTrigger("TriggerJump");
             }
-            else if (doubleJump)
-            {
-                doubleJump = false;
-                rig.velocity = new Vector2(rig.velocity.x, 0);
-                rig.AddForce(Vector2.up * JumpForce * 0.7f, ForceMode2D.Impulse);
+        }
 
-                anim.SetBool("walk", false);
-                anim.SetBool("jump", true);
-                anim.SetTrigger("TriggerJump");
+        // 2. O Corte do Pulo (Solta o botão cedo)
+        if (Input.GetButtonUp("Jump"))
+        {
+            // Checa se o Otto ainda está subindo (velocidade Y maior que 0)
+            if (rig.velocity.y > 0)
+            {
+                // Corta a velocidade pela metade instantaneamente. A gravidade faz o resto.
+                rig.velocity = new Vector2(rig.velocity.x, rig.velocity.y * multiplicadorCortePulo);
             }
         }
     }
