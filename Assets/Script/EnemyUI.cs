@@ -30,21 +30,21 @@ public class EnemyUI : MonoBehaviour
     {
         if (enemyLogic == null) return;
 
-        // 1. O SEGREDO PARA O TEXTO NÃO FICAR ESPELHADO
-        // Força a rotação da UI a ficar sempre travada de frente para a câmera (0,0,0)
-        leftCounterTransform.rotation = Quaternion.identity;
-        rightCounterTransform.rotation = Quaternion.identity;
+        // 1. O SEGREDO ATUALIZADO: Trava o Y para não espelhar, mas COPIA o Z para deitar com o Shooter
+        float anguloZ = enemyLogic.transform.eulerAngles.z;
+        leftCounterTransform.rotation = Quaternion.Euler(0f, 0f, anguloZ);
+        rightCounterTransform.rotation = Quaternion.Euler(0f, 0f, anguloZ);
 
-        // 2. O AJUSTE DE OFFSETS
-        // Verifica se o corpo do inimigo girou para a esquerda
+        // 2. O AJUSTE DE OFFSETS E ÓRBITA
         bool viradoParaEsquerda = Mathf.Abs(enemyLogic.transform.eulerAngles.y - 180f) < 10f;
-        
-        // Aplica o ajuste de distância (aqueles 0.3f do seu Shooter antigo)
         float ajusteX = viradoParaEsquerda ? -0.3f : 0f;
 
-        // Posiciona os textos mantendo a distância do offset configurado
-        leftCounterTransform.position = enemyLogic.transform.position + new Vector3(offsetLeft.x + ajusteX, offsetLeft.y, 0);
-        rightCounterTransform.position = enemyLogic.transform.position + new Vector3(offsetRight.x + ajusteX, offsetRight.y, 0);
+        Vector3 offsetEsquerdoFinal = new Vector3(offsetLeft.x + ajusteX, offsetLeft.y, 0);
+        Vector3 offsetDireitoFinal = new Vector3(offsetRight.x + ajusteX, offsetRight.y, 0);
+
+        // Multiplicar pela rotação faz os textos acompanharem o giro do corpo perfeitamente
+        leftCounterTransform.position = enemyLogic.transform.position + (enemyLogic.transform.rotation * offsetEsquerdoFinal);
+        rightCounterTransform.position = enemyLogic.transform.position + (enemyLogic.transform.rotation * offsetDireitoFinal);
 
         // 3. ATUALIZAÇÃO OTIMIZADA DOS NÚMEROS
         if (enemyLogic.valueLeft != lastLeftValue)

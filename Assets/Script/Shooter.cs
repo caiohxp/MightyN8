@@ -23,7 +23,7 @@ public class Shooter : Enemy
             return; // Se estiver deitado, congela IA, mira e giro
         }
 
-        
+        if (target == null) return;
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
             Quaternion.Euler(target.rotation.x, target.rotation.y, transform.rotation.z),

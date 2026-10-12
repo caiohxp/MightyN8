@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour, IAtingivel
         rb2d = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         
-        Player p = FindObjectOfType<Player>();
+        PlayerMove p = FindObjectOfType<PlayerMove>();
         if (p != null) target = p.transform;
         
         minX = transform.position.x - areaX;
