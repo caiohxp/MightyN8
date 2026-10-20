@@ -6,10 +6,11 @@ public class Shooter : Enemy
 {
     public GameObject bulletEnemy;
     public Transform shotEnemySpawner;
-    public float fireRate = 5;
-    public float nextFire = 0;
 
     public bool knockedFromLeft = false;
+
+    // TRAVA DE TIRO: Impede que ele reinicie a animação 60 vezes por segundo
+    private bool estaAtirando = false; 
 
     void Start()
     {
@@ -24,15 +25,19 @@ public class Shooter : Enemy
         }
 
         if (target == null) return;
+        
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
             Quaternion.Euler(target.rotation.x, target.rotation.y, transform.rotation.z),
             speed * Time.deltaTime
         );
         
+        // Se já está no meio da animação de tiro, não tenta atirar de novo!
+        if (estaAtirando) return;
+
         if (targetDistanceX < attackDistanceX && targetDistanceX > -attackDistanceX && !solved)
         {
-            
+            // O INIMIGO DECIDIU ATIRAR:
             if (targetDistanceX < 0) {
                 transform.eulerAngles = new Vector3(0f, 180f, 0f);
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 0f, 0f);
@@ -41,14 +46,16 @@ public class Shooter : Enemy
                 shotEnemySpawner.eulerAngles = new Vector3(0f, 180f, 0f);
             }
 
-            anim.SetBool("shoot", true);
+            // ATIVA A TRAVA!
+            estaAtirando = true;
+            
+            // Dispara a animação UMA ÚNICA VEZ
             anim.SetBool("walk", false);
-            EnemyShot();
+            anim.SetTrigger("shoot"); 
         }
         else
         {
             Move();
-            anim.SetBool("shoot", false);
             anim.SetBool("walk", true);
             
             if (movingRight) {
@@ -59,24 +66,32 @@ public class Shooter : Enemy
         }
     }
 
-    void EnemyShot()
+    // ==========================================
+    // A MÁGICA DA ANIMAÇÃO (CHAMADOS PELO ANIMATOR)
+    // ==========================================
+    
+    // Coloque este evento no FRAME 5 (Momento do Coice)
+    public void EnemyShot()
     {
-        if (nextFire < Time.time) {
-            nextFire = Time.time + fireRate;
-            Instantiate(bulletEnemy, shotEnemySpawner.position, shotEnemySpawner.rotation);
-        }
+        Instantiate(bulletEnemy, shotEnemySpawner.position, shotEnemySpawner.rotation);
+    }
+
+    // CRUCIAL: Coloque este evento no ÚLTIMO FRAME da animação (Frame 9)
+    public void FinalizarTiro()
+    {
+        // Libera a trava. O inimigo agora pode pensar e mirar de novo.
+        estaAtirando = false;
     }
 
     // ==========================================
-    // IMUNIDADE E INTELIGÊNCIA DOS TIROS
+    // IMUNIDADE E QUEDAS (O SEU CÓDIGO INTACTO)
     // ==========================================
     public override void HitedFromLeft(int damage)
     {
-        if (!isKnockedDown) return; // IMUNE AOS TIROS SE ESTIVER EM PÉ!
+        if (!isKnockedDown) return; 
 
-        // O tiro acertou o número que está fisicamente na ESQUERDA do boneco caído
-        if (knockedFromLeft) valueRight += damage; // Caiu pra direita, logo Fundo virou Esquerda
-        else valueLeft += damage; // Caiu pra esquerda, logo Topo virou Esquerda
+        if (knockedFromLeft) valueRight += damage; 
+        else valueLeft += damage; 
 
         CheckEquationWhileDown();
         StartCoroutine(HitedCoRoutine());
@@ -84,28 +99,24 @@ public class Shooter : Enemy
 
     public override void HitedFromRight(int damage)
     {
-        if (!isKnockedDown) return; // IMUNE AOS TIROS SE ESTIVER EM PÉ!
+        if (!isKnockedDown) return; 
 
-        // O tiro acertou o número que está fisicamente na DIREITA do boneco caído
-        if (knockedFromLeft) valueLeft += damage; // Caiu pra direita, logo Topo virou Direita
-        else valueRight += damage; // Caiu pra esquerda, logo Fundo virou Direita
+        if (knockedFromLeft) valueLeft += damage; 
+        else valueRight += damage; 
 
         CheckEquationWhileDown();
         StartCoroutine(HitedCoRoutine());
     }
 
-    // ==========================================
-    // RECEBEU SOCO E CAIU NO CHÃO
-    // ==========================================
     public override void ReceivePunch(bool hitFromLeft)
     {
         if (solved || isKnockedDown) return;
 
         knockedFromLeft = hitFromLeft; 
-        base.ReceivePunch(hitFromLeft); // Faz a animação física de cair da classe Enemy
+        base.ReceivePunch(hitFromLeft); 
 
-        if (hitFromLeft) symbolValue = 1; // < (O 'v' caiu de lado virado pra cá)
-        else symbolValue = 0; // > 
+        if (hitFromLeft) symbolValue = 1; 
+        else symbolValue = 0; 
 
         CheckEquationWhileDown(); 
     }
@@ -114,15 +125,12 @@ public class Shooter : Enemy
     {
         if (!isKnockedDown || solved) return;
 
-        // O jogo "lê" o que está escrito no chão da esquerda para a direita
         if (knockedFromLeft) 
         {
-            // Oito socou da esquerda. Visão no chão: (Fundo) < (Topo)
             if (valueRight < valueLeft) Solved();
         } 
         else 
         {
-            // Oito socou da direita. Visão no chão: (Topo) > (Fundo)
             if (valueLeft > valueRight) Solved();
         }
     }
