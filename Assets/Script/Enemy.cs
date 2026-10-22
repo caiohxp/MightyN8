@@ -18,6 +18,12 @@ public class Enemy : MonoBehaviour, IAtingivel
     [Header("Física e Soco")]
     public float knockbackForce = 5f;
     public float knockdownTime = 3f;
+
+    [Header("Recompensas")]
+    [Tooltip("Arraste o Prefab da Chave aqui se quiser que este inimigo drope uma")]
+    public GameObject keyPrefab; 
+    [Tooltip("Arraste o Portão específico que a chave deste inimigo vai abrir")]
+    public Gate portaoQueVaiAbrir; 
     
     [HideInInspector] public bool isKnockedDown = false;
     [HideInInspector] public bool solved = false;
@@ -39,7 +45,7 @@ public class Enemy : MonoBehaviour, IAtingivel
         rb2d = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         
-        PlayerMove p = FindObjectOfType<PlayerMove>();
+        PlayerMove p = FindObjectOfType<PlayerMove>(); 
         if (p != null) target = p.transform;
         
         minX = transform.position.x - areaX;
@@ -92,11 +98,31 @@ public class Enemy : MonoBehaviour, IAtingivel
 
     protected void Solved()
     {
+        if (solved) return; 
+
         gameObject.layer = 17; // EnemySolved
         sprite.color = Color.green;
         solved = true;
-        PlayerData.instance.health++;
-        PlayerData.instance.totalPoints++;
+        
+        if (PlayerData.instance != null)
+        {
+            PlayerData.instance.health++;
+            PlayerData.instance.totalPoints++;
+        }
+
+        // A MÁGICA CORRIGIDA AQUI:
+        if (keyPrefab != null)
+        {
+            // Instancia a chave
+            GameObject novaChave = Instantiate(keyPrefab, transform.position, Quaternion.identity);
+            
+            // Avisa a chave qual é o portão que ela deve abrir
+            LevelKey scriptDaChave = novaChave.GetComponent<LevelKey>();
+            if (scriptDaChave != null)
+            {
+                scriptDaChave.portaoAlvo = this.portaoQueVaiAbrir;
+            }
+        }
     }
 
     public virtual void Move()

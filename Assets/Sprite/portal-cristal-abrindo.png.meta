@@ -1,0 +1,677 @@
+fileFormatVersion: 2
+guid: 07b3116c605ec25478f4a2ba38c1e7b6
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1012
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b598a55c2d127294c976b23bc710a356
+      internalID: -1053377267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_1
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 1012
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f52a3ade9fcd774eb8b728163833d35
+      internalID: -1058996822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_2
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 1012
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 642faa45f95f06b4d9041671c78440cc
+      internalID: 1826995900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_3
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 1012
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 197732897808fe24f9cfafff51ea2fd4
+      internalID: -1744253892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_4
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 1012
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: daf756b456c6e6b46bfd947fabbd0076
+      internalID: 455324088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 760
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa9f1171c5d05674fbca3b91a6b7e19a
+      internalID: -1540839569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_6
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 760
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d25838f6049f2c04da76ace95bb105dc
+      internalID: -1873054387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_7
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 760
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10262ead8a9de6740ac25af86ea4384a
+      internalID: -1032342357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_8
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 760
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ac98108e7fb94046a5742f6b351c495
+      internalID: -149882624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_9
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 760
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 692829297962a8c41ab91ee91720af4d
+      internalID: 1518286389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 508
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7541a11957f7ea349b9762006a088076
+      internalID: -1614529643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_11
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 508
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52dd0b5bb6493be479a2eed46d8f1e21
+      internalID: -864996537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_12
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 508
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dc7135fb640b8142b31a3db68d3fcd2
+      internalID: -581020683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_13
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 508
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9db01694339a17542bdfba9ccbbd203c
+      internalID: 1748148640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_14
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 508
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6223199c6856d14687592edf7cd9a66
+      internalID: 1943585796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3ec41185362f0842b4cfa38ea57f0aa
+      internalID: 1888282398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_16
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 256
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 458c51d825b825a4d8efc0337f027c1c
+      internalID: 1971077120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_17
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 256
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5c97938c5b48e44e89c31b4a94b40f0
+      internalID: 753125948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_18
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 256
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbde1fbf7b34287448e936e52e2890ed
+      internalID: -655928098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_19
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 256
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04663ed515e01ad41a26370260af1cdf
+      internalID: 126251978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3661d33e2d58d3f4c86cecfdb90a3eb2
+      internalID: -1453496704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_21
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 4
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d71eea5a386363b439d2319402ec2358
+      internalID: 654522807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_22
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 4
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0f957e63e8646e44b876973d775c2fc
+      internalID: -1085783610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_23
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 4
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c912fa973f6396a4387425cd3d2c4ace
+      internalID: 5301726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: portal-cristal-abrindo_24
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 4
+        width: 236
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7f29238af77e67479cae07d526d29ec
+      internalID: -1485662057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      portal-cristal-abrindo_0: -1053377267
+      portal-cristal-abrindo_1: -1058996822
+      portal-cristal-abrindo_10: -1614529643
+      portal-cristal-abrindo_11: -864996537
+      portal-cristal-abrindo_12: -581020683
+      portal-cristal-abrindo_13: 1748148640
+      portal-cristal-abrindo_14: 1943585796
+      portal-cristal-abrindo_15: 1888282398
+      portal-cristal-abrindo_16: 1971077120
+      portal-cristal-abrindo_17: 753125948
+      portal-cristal-abrindo_18: -655928098
+      portal-cristal-abrindo_19: 126251978
+      portal-cristal-abrindo_2: 1826995900
+      portal-cristal-abrindo_20: -1453496704
+      portal-cristal-abrindo_21: 654522807
+      portal-cristal-abrindo_22: -1085783610
+      portal-cristal-abrindo_23: 5301726
+      portal-cristal-abrindo_24: -1485662057
+      portal-cristal-abrindo_3: -1744253892
+      portal-cristal-abrindo_4: 455324088
+      portal-cristal-abrindo_5: -1540839569
+      portal-cristal-abrindo_6: -1873054387
+      portal-cristal-abrindo_7: -1032342357
+      portal-cristal-abrindo_8: -149882624
+      portal-cristal-abrindo_9: 1518286389
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
