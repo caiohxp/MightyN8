@@ -34,7 +34,7 @@ public class MathBlock : MonoBehaviour
             if (bateuNaLateral)
             {
 
-                collision.gameObject.GetComponent<Player>().SetPushing(true);
+                collision.gameObject.GetComponent<PlayerMove>().SetPushing(true);
 
                 bool ottoEstaNaEsquerda = collision.transform.position.x < transform.position.x;
                 bool expressaoCorreta = false;
@@ -64,7 +64,7 @@ public class MathBlock : MonoBehaviour
             }
             else
             {
-                collision.gameObject.GetComponent<Player>().SetPushing(false);
+                collision.gameObject.GetComponent<PlayerMove>().SetPushing(false);
                 rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
             }
         }
@@ -77,7 +77,7 @@ public class MathBlock : MonoBehaviour
             // Quando soltar a pedra, trava o eixo X novamente
             rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
             rb.velocity = new Vector2(0, rb.velocity.y);
-            collision.gameObject.GetComponent<Player>().SetPushing(false);
+            collision.gameObject.GetComponent<PlayerMove>().SetPushing(false);
         }
     }
 }

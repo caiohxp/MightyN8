@@ -71,13 +71,17 @@
     <Compile Include="Assets\Script\FeedbackBlock.cs" />
     <Compile Include="Assets\Script\CameraPlayer.cs" />
     <Compile Include="Assets\Script\PlatformQuiz.cs" />
+    <Compile Include="Assets\Script\EnemyShooterBullet.cs" />
+    <Compile Include="Assets\Script\Key.cs" />
     <Compile Include="Assets\Menu\sound.cs" />
     <Compile Include="Assets\Script\IAtingivel.cs" />
     <Compile Include="Assets\Script\CalcNota.cs" />
     <Compile Include="Assets\Script\MathEvaluator.cs" />
     <Compile Include="Assets\Script\Counters.cs" />
+    <Compile Include="Assets\Script\Gate.cs" />
     <Compile Include="Assets\Script\PersistentManager.cs" />
     <Compile Include="Assets\Script\DangerBlock.cs" />
+    <Compile Include="Assets\Script\FloatingBlock.cs" />
     <Compile Include="Assets\Script\FloorBlock.cs" />
     <Compile Include="Assets\Script\Blocks.cs" />
     <Compile Include="Assets\Script\PlayerMove.cs" />

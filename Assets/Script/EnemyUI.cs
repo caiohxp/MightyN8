@@ -7,8 +7,8 @@ public class EnemyUI : MonoBehaviour
     public Enemy enemyLogic;
 
     [Header("Textos UI")]
-    public TextMeshProUGUI leftCounterText;
-    public TextMeshProUGUI rightCounterText;
+    public TextMeshPro leftCounterText;
+    public TextMeshPro rightCounterText;
 
     [Header("Posicionamento Físico")]
     public Transform leftCounterTransform;
@@ -37,10 +37,9 @@ public class EnemyUI : MonoBehaviour
 
         // 2. O AJUSTE DE OFFSETS E ÓRBITA
         bool viradoParaEsquerda = Mathf.Abs(enemyLogic.transform.eulerAngles.y - 180f) < 10f;
-        float ajusteX = viradoParaEsquerda ? -0.3f : 0f;
 
-        Vector3 offsetEsquerdoFinal = new Vector3(offsetLeft.x + ajusteX, offsetLeft.y, 0);
-        Vector3 offsetDireitoFinal = new Vector3(offsetRight.x + ajusteX, offsetRight.y, 0);
+        Vector3 offsetEsquerdoFinal = new Vector3(offsetLeft.x, offsetLeft.y, 0);
+        Vector3 offsetDireitoFinal = new Vector3(offsetRight.x, offsetRight.y, 0);
 
         // Multiplicar pela rotação faz os textos acompanharem o giro do corpo perfeitamente
         leftCounterTransform.position = enemyLogic.transform.position + (enemyLogic.transform.rotation * offsetEsquerdoFinal);

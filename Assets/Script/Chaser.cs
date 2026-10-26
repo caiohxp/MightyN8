@@ -7,28 +7,18 @@ public class Chaser : Enemy
 
     protected override void Awake()
     {
-        base.Awake(); // Crucial: Puxa o rb2d, anim e o target da classe Enemy
+        base.Awake(); 
         normalSpeed = speed;
         rageSpeed = speed * 2;
     }
 
-    void Start()
-    {
-        if(symbolValue == 0){
-            transform.eulerAngles = new Vector3(0f, 0f, 0f);
-        } else if(symbolValue == 1){
-            transform.eulerAngles = new Vector3(0f, 180f, 0f);
-        }
-    }
-
     protected override void Update()
     {
-        base.Update(); // Crucial: Calcula targetDistanceX e targetDistanceY]
+        base.Update(); 
         if (isKnockedDown) return;
 
         if (onFloor)
         {
-            // Checa se o alvo está dentro da caixa de ataque (ignorando se está pulando para simplificar e evitar bugs)
             bool alvoPertoX = Mathf.Abs(targetDistanceX) < attackDistanceX;
             bool alvoPertoY = Mathf.Abs(targetDistanceY) < attackDistanceY;
 
@@ -42,7 +32,6 @@ public class Chaser : Enemy
                 
                 rb2d.velocity = moveDirection * speed;
 
-                // Atualiza a âncora da patrulha para onde ele perseguiu
                 minX = transform.position.x - areaX;
                 maxX = transform.position.x + areaX;
                 
@@ -55,16 +44,20 @@ public class Chaser : Enemy
                 Move();
             }
 
-            // Controle da Animação baseado no sinal
+            // 1. O corpo vira fisicamente para onde está andando. 
+            // Isso garante o movimento natural e espelha as posições dos números.
+            transform.eulerAngles = movingRight ? new Vector3(0f, 0f, 0f) : new Vector3(0f, 180f, 0f);
+
+            // 2. A animação fica travada no símbolo correspondente, ignorando a direção da caminhada.
             if (symbolValue == 0)
             {
-                anim.SetBool("right", movingRight);
-                anim.SetBool("left", !movingRight);
+                anim.SetBool("right", true);
+                anim.SetBool("left", false);
             }
             else if (symbolValue == 1)
             {
-                anim.SetBool("right", !movingRight);
-                anim.SetBool("left", movingRight);
+                anim.SetBool("left", true);
+                anim.SetBool("right", false);
             }
         }
     }

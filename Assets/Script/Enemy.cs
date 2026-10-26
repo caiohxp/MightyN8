@@ -71,8 +71,19 @@ public class Enemy : MonoBehaviour, IAtingivel
     // --- INTERFACE UNIVERSAL DE DANO ---
     public virtual void ReceberDano(int dano, bool atingidoPelaEsquerda)
     {
-        if (atingidoPelaEsquerda) HitedFromLeft(dano);
-        else HitedFromRight(dano);
+        // Se o inimigo virou 180 graus (!movingRight), o que você atinge na esquerda da tela 
+        // é fisicamente as "costas" lógicas dele (o lado direito original).
+        if (!movingRight)
+        {
+            if (atingidoPelaEsquerda) HitedFromRight(dano);
+            else HitedFromLeft(dano);
+        }
+        else
+        {
+            // Estado normal (olhando para a direita)
+            if (atingidoPelaEsquerda) HitedFromLeft(dano);
+            else HitedFromRight(dano);
+        }
     }
 
     public virtual void HitedFromLeft(int damage)
