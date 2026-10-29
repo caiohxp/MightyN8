@@ -107,7 +107,7 @@ public class Enemy : MonoBehaviour, IAtingivel
         else StartCoroutine(HitedCoRoutine());
     }
 
-    protected void Solved()
+    protected virtual void Solved()
     {
         if (solved) return; 
 
@@ -192,7 +192,7 @@ public class Enemy : MonoBehaviour, IAtingivel
     {
         sprite.color = Color.red;
         yield return new WaitForSeconds(0.1f);
-        sprite.color = Color.white;
+        sprite.color = solved ? Color.green : Color.white;
     }
 
     // --- COLISÕES BÁSICAS ---

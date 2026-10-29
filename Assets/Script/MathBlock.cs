@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class MathBlock : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class MathBlock : MonoBehaviour
     [Header("Status do Jogador")]
     public int valorDoPlayer = 8;
 
+    [Header("Visual do Bloco")]
+    public TextMeshPro textoDoBloco;
+
     private Rigidbody2D rb;
 
     void Start()
@@ -20,6 +24,21 @@ public class MathBlock : MonoBehaviour
         // Substituímos o isKinematic!
         // O bloco começa com o Eixo X e a Rotação travados. A gravidade (Y) continua funcionando!
         rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        AtualizarTextoVisual();
+    }
+
+    public void receiveDamage(int damage)
+    {
+        valorDoBloco += damage;
+        AtualizarTextoVisual();
+    }
+
+    private void AtualizarTextoVisual()
+    {
+        if (textoDoBloco != null)
+        {
+            textoDoBloco.text = valorDoBloco.ToString();
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
