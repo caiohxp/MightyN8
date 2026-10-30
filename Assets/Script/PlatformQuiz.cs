@@ -48,7 +48,7 @@ public class PlataformaQuiz : MonoBehaviour
                 {
                     // Resposta errada: Vermelho, intangível e cai
                     sprite.color = Color.red;
-                    AtivarQuedaLivre(collision.transform);
+                    StartCoroutine(SubirPlataforma());
                 }
             }
         }
@@ -73,18 +73,5 @@ public class PlataformaQuiz : MonoBehaviour
                 yield return null;
             }
         }
-    }
-
-    void AtivarQuedaLivre(Transform player)
-    {
-        // 1. Desgruda o player imediatamente para a plataforma não puxar ele junto
-        player.SetParent(null);
-        
-        // 2. Desliga o colisor (fica intangível) para o Otto passar direto
-        col.enabled = false;
-        
-        // 3. Faz o bloco cair
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        rb.constraints = RigidbodyConstraints2D.None;
     }
 }
