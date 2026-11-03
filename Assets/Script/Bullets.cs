@@ -23,20 +23,22 @@ public class Bullets : MonoBehaviour
 
     void Update()
     {
-        if (atingiu) return;
+        if (atingiu)
+            return;
 
-        Vector2 origem = bulletCollider != null
-            ? bulletCollider.bounds.center
-            : (Vector2)transform.position;
+        Vector2 origem =
+            bulletCollider != null ? bulletCollider.bounds.center : (Vector2)transform.position;
 
         Vector2 movimento = (Vector2)transform.right * speed * Time.deltaTime;
         float distancia = movimento.magnitude;
 
-        if (distancia <= 0f) return;
+        if (distancia <= 0f)
+            return;
 
-        float raio = bulletCollider != null
-            ? Mathf.Max(bulletCollider.bounds.extents.x, bulletCollider.bounds.extents.y)
-            : 0.02f;
+        float raio =
+            bulletCollider != null
+                ? Mathf.Max(bulletCollider.bounds.extents.x, bulletCollider.bounds.extents.y)
+                : 0.02f;
 
         RaycastHit2D[] impactos = Physics2D.CircleCastAll(
             origem,
@@ -72,12 +74,19 @@ public class Bullets : MonoBehaviour
         if (atingiu || collision == null || collision == bulletCollider)
             return false;
 
+        Enemy inimigo = collision.GetComponentInParent<Enemy>();
+        if (inimigo != null && inimigo.solved)
+            return false;
+
         MathBlock bloco = collision.GetComponentInParent<MathBlock>();
 
         if (bloco != null)
         {
             atingiu = true;
-            bloco.receiveDamage(damage);
+            bloco.receiveDamage(
+                PlayerData.instance.currentMode,
+                PlayerData.instance.currentMultiplier
+            );
             Destroy(gameObject);
             return true;
         }
@@ -88,10 +97,13 @@ public class Bullets : MonoBehaviour
         {
             atingiu = true;
 
-            bool atingidoPelaEsquerda =
-                collision.transform.position.x - initialPosition.x > 0;
+            bool atingidoPelaEsquerda = collision.transform.position.x - initialPosition.x > 0;
 
-            alvo.ReceberDano(damage, atingidoPelaEsquerda);
+            alvo.receiveDamage(
+                PlayerData.instance.currentMode,
+                PlayerData.instance.currentMultiplier,
+                atingidoPelaEsquerda
+            );
             Destroy(gameObject);
             return true;
         }

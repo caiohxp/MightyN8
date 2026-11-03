@@ -69,8 +69,8 @@ public class DestructBlock : MonoBehaviour, IAtingivel
         varSprite.color = Color.white;
     }
 
-    public void ReceberDano(int dano, bool atingidoPelaEsquerda)
+    public void receiveDamage(PlayerData.MathOperation operacao, int multiplicador, bool atingidoPelaEsquerda)
     {
-        Hited(dano);
+        // Implementation for receiving damage
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="Assets\Script\MathBlock.cs" />
     <Compile Include="Assets\Script\Bullets.cs" />
     <Compile Include="Assets\Script\HUD.cs" />
+    <Compile Include="Assets\Script\ItemArsenal.cs" />
     <Compile Include="Assets\Menu\soundManager.cs" />
     <Compile Include="Assets\Script\PlayerHealth.cs" />
     <Compile Include="Assets\Script\FeedbackBlock.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Assets\Script\PlayerData.cs" />
     <Compile Include="Assets\Script\Shooter.cs" />
     <Compile Include="Assets\Script\DestructBlock.cs" />
+    <Compile Include="Assets\Script\CameraZoneTrigger.cs" />
     <Compile Include="Assets\Script\Player.cs" />
     <Compile Include="Assets\Script\GameController.cs" />
     <Compile Include="Assets\Script\TelaMenu.cs" />

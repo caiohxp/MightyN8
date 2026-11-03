@@ -27,9 +27,23 @@ public class MathBlock : MonoBehaviour
         AtualizarTextoVisual();
     }
 
-    public void receiveDamage(int damage)
+    public void receiveDamage(PlayerData.MathOperation operacao, int multiplicador)
     {
-        valorDoBloco += damage;
+        switch (operacao)
+        {
+            case PlayerData.MathOperation.Sum: 
+                valorDoBloco += multiplicador; 
+                break;
+            case PlayerData.MathOperation.Sub: 
+                valorDoBloco -= multiplicador; 
+                break;
+            case PlayerData.MathOperation.Multi: 
+                valorDoBloco *= multiplicador; 
+                break;
+            case PlayerData.MathOperation.Div: 
+                if (multiplicador != 0) valorDoBloco /= multiplicador; 
+                break;
+        }
         AtualizarTextoVisual();
     }
 

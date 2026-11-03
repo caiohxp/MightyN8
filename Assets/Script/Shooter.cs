@@ -121,40 +121,40 @@ public class Shooter : Enemy
     // ==========================================
 
     // --- CORREÇÃO: SOBRESCREVE A REGRA DE DANO DO INIMIGO BASE ---
-    public override void ReceberDano(int dano, bool atingidoPelaEsquerda)
+    public override void receiveDamage(PlayerData.MathOperation operacao, int multiplicador, bool atingidoPelaEsquerda)
     {
         // Se o Shooter estiver deitado, ele ignora a regra de 180 graus do Chaser
         // e usa puramente o lado em que a bala bateu na tela.
         if (isKnockedDown)
         {
-            if (atingidoPelaEsquerda) HitedFromLeft(dano);
-            else HitedFromRight(dano);
+            if (atingidoPelaEsquerda) HitedFromLeft(operacao, multiplicador);
+            else HitedFromRight(operacao, multiplicador);
         }
         else
         {
             // Se estiver em pé, obedece o código base normal
-            base.ReceberDano(dano, atingidoPelaEsquerda);
+            base.receiveDamage(operacao, multiplicador, atingidoPelaEsquerda);
         }
     }
 
-    public override void HitedFromLeft(int damage)
+    public override void HitedFromLeft(PlayerData.MathOperation operacao, int multiplicador)
     {
         if (!isKnockedDown) return;
 
-        if (knockedFromLeft) valueRight += damage;
-        else valueLeft += damage;
+        if (knockedFromLeft) valueRight = CalcularNovoValor(valueRight, operacao, multiplicador);
+        else valueLeft = CalcularNovoValor(valueLeft, operacao, multiplicador);
 
         CheckEquationWhileDown();
         if (!solved)
             StartCoroutine(HitedCoRoutine());
     }
 
-    public override void HitedFromRight(int damage)
+    public override void HitedFromRight(PlayerData.MathOperation operacao, int multiplicador)
     {
         if (!isKnockedDown) return;
 
-        if (knockedFromLeft) valueLeft += damage;
-        else valueRight += damage;
+        if (knockedFromLeft) valueLeft = CalcularNovoValor(valueLeft, operacao, multiplicador);
+        else valueRight = CalcularNovoValor(valueRight, operacao, multiplicador);
 
         CheckEquationWhileDown();
         if (!solved)

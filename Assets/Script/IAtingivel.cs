@@ -1,4 +1,4 @@
 public interface IAtingivel 
 {
-    void ReceberDano(int dano, bool atingidoPelaEsquerda);
+    void receiveDamage(PlayerData.MathOperation operacao, int multiplicador, bool atingidoPelaEsquerda);
 }

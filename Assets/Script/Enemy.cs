@@ -69,35 +69,44 @@ public class Enemy : MonoBehaviour, IAtingivel
     }
 
     // --- INTERFACE UNIVERSAL DE DANO ---
-    public virtual void ReceberDano(int dano, bool atingidoPelaEsquerda)
+    public virtual void receiveDamage(PlayerData.MathOperation operacao, int multiplicador, bool atingidoPelaEsquerda)
     {
-        // Se o inimigo virou 180 graus (!movingRight), o que você atinge na esquerda da tela 
-        // é fisicamente as "costas" lógicas dele (o lado direito original).
         if (!movingRight)
         {
-            if (atingidoPelaEsquerda) HitedFromRight(dano);
-            else HitedFromLeft(dano);
+            if (atingidoPelaEsquerda) HitedFromRight(operacao, multiplicador);
+            else HitedFromLeft(operacao, multiplicador);
         }
         else
         {
-            // Estado normal (olhando para a direita)
-            if (atingidoPelaEsquerda) HitedFromLeft(dano);
-            else HitedFromRight(dano);
+            if (atingidoPelaEsquerda) HitedFromLeft(operacao, multiplicador);
+            else HitedFromRight(operacao, multiplicador);
         }
     }
 
-    public virtual void HitedFromLeft(int damage)
+    public virtual void HitedFromLeft(PlayerData.MathOperation operacao, int multiplicador)
     {
         if (solved) return;
-        valueLeft += damage;
+        valueLeft = CalcularNovoValor(valueLeft, operacao, multiplicador);
         CheckResolution();
     }
 
-    public virtual void HitedFromRight(int damage)
+    public virtual void HitedFromRight(PlayerData.MathOperation operacao, int multiplicador)
     {
         if (solved) return;
-        valueRight += damage;
+        valueRight = CalcularNovoValor(valueRight, operacao, multiplicador);
         CheckResolution();
+    }
+
+    protected int CalcularNovoValor(int valorAtual, PlayerData.MathOperation operacao, int multiplicador)
+    {
+        switch (operacao)
+        {
+            case PlayerData.MathOperation.Sum: return valorAtual + multiplicador;
+            case PlayerData.MathOperation.Sub: return valorAtual - multiplicador;
+            case PlayerData.MathOperation.Multi: return valorAtual * multiplicador;
+            case PlayerData.MathOperation.Div: return multiplicador != 0 ? valorAtual / multiplicador : valorAtual;
+            default: return valorAtual;
+        }
     }
 
     protected void CheckResolution()

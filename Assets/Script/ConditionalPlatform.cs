@@ -102,7 +102,7 @@ public class ConditionalPlatform : MonoBehaviour
 
         foreach (Collider2D hit in objetosProximos)
         {
-            bool isPlayer = hit.gameObject.layer == 9 || hit.gameObject.CompareTag("Player");
+            bool isPlayer = hit.gameObject.CompareTag("Player");
             MathBlock caixa = hit.gameObject.GetComponentInParent<MathBlock>();
 
             if (isPlayer || caixa != null)
@@ -135,7 +135,7 @@ public class ConditionalPlatform : MonoBehaviour
 
         if (pisouPorCima)
         {
-            bool isPlayer = collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player");
+            bool isPlayer = collision.gameObject.CompareTag("Player");
             MathBlock caixa = collision.gameObject.GetComponentInParent<MathBlock>();
 
             if (isPlayer || caixa != null)
@@ -148,12 +148,6 @@ public class ConditionalPlatform : MonoBehaviour
                     if (sprite != null) sprite.color = Color.white;
                     if (seDestroiComAcerto) StartCoroutine(RotinaDeDestruicao());
                 }
-                else
-                {
-                    // A plataforma normal ainda pune o erro quebrando ou sumindo globalmente
-                    coll.enabled = false;
-                    if (sprite != null) sprite.color = new Color(1f, 1f, 1f, transparenciaFantasma);
-                }
             }
         }
     }
@@ -163,7 +157,7 @@ public class ConditionalPlatform : MonoBehaviour
     {
         if (tipoPlataforma == TipoPlataforma.Magnetica)
         {
-            bool isPlayer = collision.gameObject.layer == 9 || collision.gameObject.CompareTag("Player");
+            bool isPlayer = collision.gameObject.CompareTag("Player");
             if (isPlayer)
             {
                 bool expressaoCorreta = MathEvaluator.Validar(valorDoPlayer, simbolo, valorDaPlataforma);
