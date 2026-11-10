@@ -14,7 +14,6 @@ public class Gate : MonoBehaviour
 
         if (pilarFront != null) 
         {
-            Debug.Log("Desativando pilar frontal do portão");
             pilarFront.SetActive(false);
         }
     }
@@ -36,7 +35,6 @@ public class Gate : MonoBehaviour
     {
         if (pilarFront != null)
         {
-            Debug.Log("Ativando pilar frontal do portão");
             pilarFront.SetActive(true);
         }
     }

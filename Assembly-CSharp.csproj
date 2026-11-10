@@ -94,7 +94,9 @@
     <Compile Include="Assets\Script\CameraZoneTrigger.cs" />
     <Compile Include="Assets\Script\Player.cs" />
     <Compile Include="Assets\Script\GameController.cs" />
+    <Compile Include="Assets\Script\PortaInicialSala.cs" />
     <Compile Include="Assets\Script\TelaMenu.cs" />
+    <Compile Include="Assets\Script\PortaInterativa.cs" />
     <Compile Include="Assets\Script\BooleanObstacle.cs" />
   </ItemGroup>
   <ItemGroup>
