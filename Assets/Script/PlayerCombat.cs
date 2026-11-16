@@ -136,6 +136,16 @@ public class PlayerCombat : MonoBehaviour
             bool hitFromLeft = hitCollider.transform.position.x > transform.position.x;
             enemy.ReceivePunch(hitFromLeft);
         }
+
+        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(punchPoint.position, punchRadius);
+        foreach (Collider2D hitCollider in hitObjects)
+        {
+            GeometricTarget alvo = hitCollider.GetComponent<GeometricTarget>();
+            if (alvo != null)
+            {
+                alvo.ReceberSoco(); 
+            }
+        }
     }
 
     public void EndShot() { isShooting = false; }
