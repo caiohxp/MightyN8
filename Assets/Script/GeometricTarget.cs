@@ -3,31 +3,35 @@ using UnityEngine;
 public class GeometricTarget : MonoBehaviour
 {
     [Header("Identificação")]
-    [Tooltip("Define qual é esta forma (ex: 0 = Círculo, 1 = Quadrado, 2 = Triângulo)")]
+    [Tooltip("Define qual é esta forma (0 = Círculo, 1 = Quadrado, 2 = Triângulo)")]
     public int idDaForma;
-    
+
     [Header("Comportamento Base")]
     public float tempoDeVida = 6f; // Destrói se o Otto ignorar
 
-    // Referência ao mestre que atirou para reportar quando levar o soco
+    // Máquina que atirou esta forma
     [HideInInspector] public GeometricMachine maquinaPai;
+
+    private bool foiSocada = false;
 
     void Start()
     {
         Destroy(gameObject, tempoDeVida);
     }
 
-    // Usaremos a função pública para quando o Otto der o "Soco Físico"
-    public void ReceberSoco()
+    // Chamada pelo PlayerCombat quando o soco acerta a forma
+    public void ReceberSoco(PlayerHealth jogador)
     {
-        // Se a máquina que atirou ainda existir, avisa que esta forma levou o soco
+        if (foiSocada) return; // evita contar o mesmo soco duas vezes
+        foiSocada = true;
+
         if (maquinaPai != null)
         {
-            maquinaPai.RegistrarAcerto(idDaForma);
+            maquinaPai.RegistrarAcerto(idDaForma, jogador, transform.position.x);
         }
-        
+
         // Efeito visual de quebra aqui
-        
-        Destroy(gameObject); // Some da tela ao levar soco
+
+        Destroy(gameObject);
     }
 }

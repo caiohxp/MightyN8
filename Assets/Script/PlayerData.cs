@@ -6,14 +6,15 @@ public class PlayerData : MonoBehaviour
     public int totalPoints;
     public int health = 10;
 
+    // A ordem do enum é a ordem em que a tecla E/Q percorre os modos
     public enum MathOperation { Sum, Sub, Multi, Div }
 
     [Header("Ammo & Multiplier")]
-    public int universalAmmo = 15; 
-    public int currentMultiplier = 1; 
+    public int universalAmmo = 15;
+    public int currentMultiplier = 1;
 
     [Header("Unlocked Operations")]
-    public bool unlockedSum = true; 
+    public bool unlockedSum = true;
     public bool unlockedSub = false;
     public bool unlockedMulti = false;
     public bool unlockedDiv = false;
@@ -26,19 +27,39 @@ public class PlayerData : MonoBehaviour
         instance = this;
     }
 
-    void Update() 
-    { 
+    void Update()
+    {
         SwitchWeaponWithKeyboard();
     }
 
+    public bool IsUnlocked(MathOperation operation)
+    {
+        switch (operation)
+        {
+            case MathOperation.Sum: return unlockedSum;
+            case MathOperation.Sub: return unlockedSub;
+            case MathOperation.Multi: return unlockedMulti;
+            case MathOperation.Div: return unlockedDiv;
+        }
+        return false;
+    }
+
+    // Vai para a próxima operação desbloqueada, pulando as bloqueadas
+    // e voltando ao início quando chega no fim
     private void SwitchWeaponWithKeyboard()
     {
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Q))
+        if (!Input.GetKeyDown(KeyCode.E) && !Input.GetKeyDown(KeyCode.Q)) return;
+
+        int total = System.Enum.GetValues(typeof(MathOperation)).Length;
+
+        for (int i = 1; i <= total; i++)
         {
-            if (currentMode == MathOperation.Sum && unlockedSub) currentMode = MathOperation.Sub;
-            else if (currentMode == MathOperation.Sub && unlockedMulti) currentMode = MathOperation.Multi;
-            else if (currentMode == MathOperation.Multi && unlockedDiv) currentMode = MathOperation.Div;
-            else currentMode = MathOperation.Sum;
+            MathOperation candidato = (MathOperation)(((int)currentMode + i) % total);
+            if (IsUnlocked(candidato))
+            {
+                currentMode = candidato;
+                return;
+            }
         }
     }
 

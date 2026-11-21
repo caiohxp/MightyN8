@@ -13869,7 +13869,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <
+  m_text: =
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b063e395b58928b4aae381b4f1d53072, type: 2}
   m_sharedMaterial: {fileID: 270889813021822287, guid: b063e395b58928b4aae381b4f1d53072, type: 2}
@@ -84337,11 +84337,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1045948012439549384, guid: e383a4b4675d4f446916ccde65270389, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.6972847
+      value: 292.67365
       objectReference: {fileID: 0}
     - target: {fileID: 1045948012439549384, guid: e383a4b4675d4f446916ccde65270389, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.6999993
+      value: 88.600006
       objectReference: {fileID: 0}
     - target: {fileID: 1045948012439549384, guid: e383a4b4675d4f446916ccde65270389, type: 3}
       propertyPath: m_LocalPosition.z
@@ -145905,7 +145905,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.6972847, y: 4.6999993}
+  m_AnchoredPosition: {x: 292.67365, y: 88.600006}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &1050193182230126681
@@ -146737,7 +146737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530cea23657cd22459ad1ac6a4504a77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sinalEsquerdo: 2
+  sinalEsquerdo: 0
   sinalDireito: 1
   valorDoBloco: 8
   valorDoPlayer: 8
@@ -147075,7 +147075,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1108492851541800940}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.250664, y: 4.6999993, z: -11.268844}
+  m_LocalPosition: {x: 268.29752, y: 88.600006, z: -11.268844}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -490615,8 +490615,8 @@ MonoBehaviour:
   portaoQueVaiAbrir: {fileID: 0}
   isKnockedDown: 0
   solved: 0
-  nextDecrement: 0
   decrementRate: 2
+  explosionRadius: 3
 --- !u!1 &6464737271070107407
 GameObject:
   m_ObjectHideFlags: 0
@@ -491559,7 +491559,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 827870082007951215}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.5, y: -0.1, z: -1.2688437}
+  m_LocalPosition: {x: 276.6, y: 83.8, z: -1.2688437}
   m_LocalScale: {x: 2.4113, y: 2.4113, z: 2.4113}
   m_ConstrainProportionsScale: 0
   m_Children:

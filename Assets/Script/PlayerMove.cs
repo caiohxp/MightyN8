@@ -67,7 +67,7 @@ public class PlayerMove : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float velocidadeAtual = isPushing ? pushSpeed : Speed;
 
-        rig.velocity = new Vector2(horizontal * velocidadeAtual, rig.velocity.y);
+        rig.linearVelocity = new Vector2(horizontal * velocidadeAtual, rig.linearVelocity.y);
 
         bool shouldWalk = Mathf.Abs(horizontal) > 0.01f && isGrounded && !isPushing;
         anim.SetBool("walk", shouldWalk);
@@ -94,11 +94,11 @@ public class PlayerMove : MonoBehaviour
                 anim.SetBool("jump", true);
 
                 // Zera a velocidade vertical antes de aplicar a nova força para não acumular
-                rig.velocity = new Vector2(rig.velocity.x, 0);
-                
+                rig.linearVelocity = new Vector2(rig.linearVelocity.x, 0);
+
                 // Aplica a força total do pulo de uma vez só (Este é o limite máximo)
                 rig.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
-                
+
                 anim.SetTrigger("TriggerJump");
             }
         }
@@ -107,10 +107,10 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonUp("Jump"))
         {
             // Checa se o Otto ainda está subindo (velocidade Y maior que 0)
-            if (rig.velocity.y > 0)
+            if (rig.linearVelocity.y > 0)
             {
                 // Corta a velocidade pela metade instantaneamente. A gravidade faz o resto.
-                rig.velocity = new Vector2(rig.velocity.x, rig.velocity.y * multiplicadorCortePulo);
+                rig.linearVelocity = new Vector2(rig.linearVelocity.x, rig.linearVelocity.y * multiplicadorCortePulo);
             }
         }
     }

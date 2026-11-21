@@ -8,12 +8,20 @@ public class PlayerHealth : MonoBehaviour
     public float KBForce = 5f;
     public float KBTotalTime = 0.2f;
 
+    // Os valores padrão são os mesmos números que estavam fixos no código.
+    // Se mudar as layers no projeto, é só ajustar aqui no Inspector.
+    [Header("Layers")]
+    public LayerMask enemyLayer = 1 << 9;
+    public LayerMask enemyBulletLayer = 1 << 8;
+    public LayerMask spikeLayer = 1 << 15;
+    public LayerMask finalPlatformLayer = 1 << 14;
+
     [HideInInspector] public bool isKnockedBack = false;
     [HideInInspector] public bool onFinalPlatform = false;
 
     private float KBCounter;
     private bool KnockFromRight;
-    
+
     private Rigidbody2D rig;
     private Animator anim;
     private SpriteRenderer sprite;
@@ -21,6 +29,11 @@ public class PlayerHealth : MonoBehaviour
     private PlayerMove movement;
 
     private float positionYOnFinalPlatform;
+
+    static bool InLayer(GameObject obj, LayerMask mask)
+    {
+        return (mask.value & (1 << obj.layer)) != 0;
+    }
 
     void Start()
     {
@@ -37,8 +50,8 @@ public class PlayerHealth : MonoBehaviour
         if (KBCounter > 0)
         {
             isKnockedBack = true;
-            if (KnockFromRight) rig.velocity = new Vector2(-KBForce, KBForce);
-            else rig.velocity = new Vector2(KBForce, KBForce);
+            if (KnockFromRight) rig.linearVelocity = new Vector2(-KBForce, KBForce);
+            else rig.linearVelocity = new Vector2(KBForce, KBForce);
 
             KBCounter -= Time.deltaTime;
         }
@@ -55,10 +68,11 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float collisionX)
+    // ignorePunchImmunity: usado pelo puzzle, que dá dano justamente quando o Otto está socando
+    public void TakeDamage(float collisionX, bool ignorePunchImmunity = false)
     {
         // Imunidade de impacto durante o soco
-        if (combat != null && combat.isPunching) return;
+        if (!ignorePunchImmunity && combat != null && combat.isPunching) return;
 
         PlayerData.instance.health--;
 
@@ -80,14 +94,16 @@ public class PlayerHealth : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        GameObject other = collision.gameObject;
+
         // Inimigos ou balas do inimigo
-        if (collision.gameObject.layer == 9 || collision.gameObject.layer == 8)
+        if (InLayer(other, enemyLayer) || InLayer(other, enemyBulletLayer))
         {
             TakeDamage(collision.transform.position.x);
         }
 
-        if (collision.gameObject.layer == 8) collision.gameObject.SetActive(false);
-        if (collision.gameObject.layer == 15) PlayerData.instance.health = 0; // Espinhos
+        if (InLayer(other, enemyBulletLayer)) other.SetActive(false);
+        if (InLayer(other, spikeLayer)) PlayerData.instance.health = 0; // Espinhos
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -101,12 +117,12 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(collision.transform.position.x);
         }
 
-        if (collision.gameObject.layer == 14) positionYOnFinalPlatform = transform.position.y;
+        if (InLayer(collision.gameObject, finalPlatformLayer)) positionYOnFinalPlatform = transform.position.y;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 14) // Plataforma de Nota Final
+        if (InLayer(collision.gameObject, finalPlatformLayer)) // Plataforma de Nota Final
         {
             float currentSpeed = movement != null ? movement.Speed : 10f;
             collision.gameObject.transform.Translate(Vector2.down * currentSpeed * Time.deltaTime);
@@ -120,7 +136,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 14) onFinalPlatform = false;
+        if (InLayer(collision.gameObject, finalPlatformLayer)) onFinalPlatform = false;
     }
 
     IEnumerator HitedCoRoutine()

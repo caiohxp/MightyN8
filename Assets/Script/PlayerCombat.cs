@@ -3,10 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class PlayerCombat : MonoBehaviour
 {
-    public enum ModoDisparo { Soma, Subtracao, Multiplicacao, Divisao }
-
-    [Header("Gerenciamento de Arma")]
-    public ModoDisparo currentMode = ModoDisparo.Soma;
+    // O modo de disparo agora vive só em PlayerData.instance.currentMode
+    // (a troca com E/Q também é feita lá).
 
     [Header("Prefabs de Munição")]
     public GameObject bulletPlusPrefab;
@@ -15,7 +13,7 @@ public class PlayerCombat : MonoBehaviour
     public GameObject bulletDivPrefab;
 
     public float fireRate = 0.5f;
-    public Transform shotSpawnerUp; 
+    public Transform shotSpawnerUp;
     [HideInInspector] public bool isShooting = false;
     private float nextFire = 0;
 
@@ -24,6 +22,8 @@ public class PlayerCombat : MonoBehaviour
     public Transform punchPoint;
     public float punchRadius = 0.5f;
     public LayerMask enemyLayer;
+    [Tooltip("Layer só das formas geométricas (crie uma layer 'Formas' e coloque nos prefabs). O padrão 'Everything' funciona, mas é menos eficiente.")]
+    public LayerMask geometricLayer = ~0;
     [HideInInspector] public bool isPunching = false;
     private float nextPunch = 0;
 
@@ -42,50 +42,19 @@ public class PlayerCombat : MonoBehaviour
     {
         if (health != null && (health.isKnockedBack || health.onFinalPlatform)) return;
 
-        TrocarOperacao();
         Shot();
         Punch();
-    }
-
-    void TrocarOperacao()
-    {
-        // Alterna para o próximo modo desbloqueado ao apertar a tecla E (ou Q)
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Q))
-        {
-            if (currentMode == ModoDisparo.Soma)
-            {
-                if (PlayerData.instance.unlockedSub) currentMode = ModoDisparo.Subtracao;
-                else if (PlayerData.instance.unlockedMulti) currentMode = ModoDisparo.Multiplicacao;
-                else if (PlayerData.instance.unlockedDiv) currentMode = ModoDisparo.Divisao;
-            }
-            else if (currentMode == ModoDisparo.Subtracao)
-            {
-                if (PlayerData.instance.unlockedMulti) currentMode = ModoDisparo.Multiplicacao;
-                else if (PlayerData.instance.unlockedDiv) currentMode = ModoDisparo.Divisao;
-                else currentMode = ModoDisparo.Soma; // Cicla de volta pro início
-            }
-            else if (currentMode == ModoDisparo.Multiplicacao)
-            {
-                if (PlayerData.instance.unlockedDiv) currentMode = ModoDisparo.Divisao;
-                else currentMode = ModoDisparo.Soma;
-            }
-            else if (currentMode == ModoDisparo.Divisao)
-            {
-                currentMode = ModoDisparo.Soma;
-            }
-        }
     }
 
     void Shot()
     {
         if (Input.GetButtonDown("Fire1") && nextFire < Time.time && !isShooting && !isPunching)
         {
-            // Consulta a munição universal diretamente do PlayerData
-            if (PlayerData.instance.universalAmmo <= 0) return; 
+            if (PlayerData.instance.universalAmmo <= 0) return;
 
-            PlayerData.instance.universalAmmo--; // Gasta 1 da reserva
+            PlayerData.instance.universalAmmo--;
             isShooting = true;
-            rig.velocity = new Vector2(0, rig.velocity.y); 
+            rig.linearVelocity = new Vector2(0, rig.linearVelocity.y);
             anim.SetTrigger("ShootPlus");
             nextFire = Time.time + fireRate;
         }
@@ -96,7 +65,7 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetButtonDown("Fire2") && nextPunch < Time.time && !isPunching && !isShooting)
         {
             isPunching = true;
-            rig.velocity = new Vector2(0, rig.velocity.y); 
+            rig.linearVelocity = new Vector2(0, rig.linearVelocity.y);
             anim.SetTrigger("TriggerPunch");
             nextPunch = Time.time + punchRate;
         }
@@ -105,18 +74,18 @@ public class PlayerCombat : MonoBehaviour
     // ==========================================
     // ANIMATION EVENTS
     // ==========================================
-    
-    // Certifique-se de usar "SpawnSelectedProjectile" na janela Animation no frame do tiro
+
+    // Use "SpawnSelectedProjectile" na janela Animation no frame do tiro
     public void SpawnSelectedProjectile()
     {
-        GameObject prefabParaAtirar = bulletPlusPrefab; // Padrão
-        
-        switch (currentMode)
+        GameObject prefabParaAtirar = bulletPlusPrefab;
+
+        switch (PlayerData.instance.currentMode)
         {
-            case ModoDisparo.Soma: prefabParaAtirar = bulletPlusPrefab; break;
-            case ModoDisparo.Subtracao: prefabParaAtirar = bulletMinusPrefab; break;
-            case ModoDisparo.Multiplicacao: prefabParaAtirar = bulletMultPrefab; break;
-            case ModoDisparo.Divisao: prefabParaAtirar = bulletDivPrefab; break;
+            case PlayerData.MathOperation.Sum: prefabParaAtirar = bulletPlusPrefab; break;
+            case PlayerData.MathOperation.Sub: prefabParaAtirar = bulletMinusPrefab; break;
+            case PlayerData.MathOperation.Multi: prefabParaAtirar = bulletMultPrefab; break;
+            case PlayerData.MathOperation.Div: prefabParaAtirar = bulletDivPrefab; break;
         }
 
         if (prefabParaAtirar != null && shotSpawnerUp != null)
@@ -128,6 +97,8 @@ public class PlayerCombat : MonoBehaviour
     public void ApplyPunchDamage()
     {
         if (punchPoint == null) return;
+
+        // Inimigos
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(punchPoint.position, punchRadius, enemyLayer);
         foreach (Collider2D hitCollider in hitEnemies)
         {
@@ -137,15 +108,26 @@ public class PlayerCombat : MonoBehaviour
             enemy.ReceivePunch(hitFromLeft);
         }
 
-        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(punchPoint.position, punchRadius);
+        // Formas geométricas: um soco acerta só a forma mais próxima,
+        // para não contar acerto e erro no mesmo golpe
+        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(punchPoint.position, punchRadius, geometricLayer);
+        GeometricTarget maisProxima = null;
+        float menorDistancia = float.MaxValue;
+
         foreach (Collider2D hitCollider in hitObjects)
         {
             GeometricTarget alvo = hitCollider.GetComponent<GeometricTarget>();
-            if (alvo != null)
+            if (alvo == null) continue;
+
+            float distancia = ((Vector2)hitCollider.transform.position - (Vector2)punchPoint.position).sqrMagnitude;
+            if (distancia < menorDistancia)
             {
-                alvo.ReceberSoco(); 
+                menorDistancia = distancia;
+                maisProxima = alvo;
             }
         }
+
+        if (maisProxima != null) maisProxima.ReceberSoco(health);
     }
 
     public void EndShot() { isShooting = false; }
