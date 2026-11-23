@@ -27,6 +27,11 @@ public class PlayerCombat : MonoBehaviour
     [HideInInspector] public bool isPunching = false;
     private float nextPunch = 0;
 
+    [Header("Segurança Anti-Travamento")]
+    [Tooltip("Tempo máximo (pouco maior que a animação de tiro/soco) para destravar caso o Animation Event não dispare")]
+    public float maxAttackLockTime = 0.6f;
+    private float attackUnlockTimer = 0f;
+
     private Rigidbody2D rig;
     private Animator anim;
     private PlayerHealth health;
@@ -40,7 +45,22 @@ public class PlayerCombat : MonoBehaviour
 
     void Update()
     {
-        if (health != null && (health.isKnockedBack || health.onFinalPlatform)) return;
+        if (health != null && (health.isKnockedBack || health.onFinalPlatform))
+        {
+            // Se tomar knockback no meio de um tiro/soco, garante que não volta travado depois
+            if (isShooting || isPunching) CancelAttacks();
+            return;
+        }
+
+        // Trava de segurança: destrava automaticamente se a animação for interrompida por um relevo/queda
+        if (isShooting || isPunching)
+        {
+            attackUnlockTimer -= Time.deltaTime;
+            if (attackUnlockTimer <= 0f)
+            {
+                CancelAttacks();
+            }
+        }
 
         Shot();
         Punch();
@@ -54,7 +74,8 @@ public class PlayerCombat : MonoBehaviour
 
             PlayerData.instance.universalAmmo--;
             isShooting = true;
-            rig.linearVelocity = new Vector2(0, rig.linearVelocity.y);
+            attackUnlockTimer = maxAttackLockTime;
+            rig.velocity = new Vector2(0, rig.velocity.y);
             anim.SetTrigger("ShootPlus");
             nextFire = Time.time + fireRate;
         }
@@ -65,7 +86,8 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetButtonDown("Fire2") && nextPunch < Time.time && !isPunching && !isShooting)
         {
             isPunching = true;
-            rig.linearVelocity = new Vector2(0, rig.linearVelocity.y);
+            attackUnlockTimer = maxAttackLockTime;
+            rig.velocity = new Vector2(0, rig.velocity.y);
             anim.SetTrigger("TriggerPunch");
             nextPunch = Time.time + punchRate;
         }
@@ -130,9 +152,30 @@ public class PlayerCombat : MonoBehaviour
         if (maisProxima != null) maisProxima.ReceberSoco(health);
     }
 
-    public void EndShot() { isShooting = false; }
-    public void EndPunch() { isPunching = false; }
-    public void CancelAttacks() { isShooting = false; isPunching = false; }
+    public void EndShot()
+    {
+        isShooting = false;
+        attackUnlockTimer = 0f;
+    }
+
+    public void EndPunch()
+    {
+        isPunching = false;
+        attackUnlockTimer = 0f;
+    }
+
+    public void CancelAttacks()
+    {
+        isShooting = false;
+        isPunching = false;
+        attackUnlockTimer = 0f;
+
+        if (anim != null)
+        {
+            anim.ResetTrigger("ShootPlus");
+            anim.ResetTrigger("TriggerPunch");
+        }
+    }
 
     void OnDrawGizmosSelected()
     {

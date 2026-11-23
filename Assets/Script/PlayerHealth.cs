@@ -50,8 +50,8 @@ public class PlayerHealth : MonoBehaviour
         if (KBCounter > 0)
         {
             isKnockedBack = true;
-            if (KnockFromRight) rig.linearVelocity = new Vector2(-KBForce, KBForce);
-            else rig.linearVelocity = new Vector2(KBForce, KBForce);
+            if (KnockFromRight) rig.velocity = new Vector2(-KBForce, KBForce);
+            else rig.velocity = new Vector2(KBForce, KBForce);
 
             KBCounter -= Time.deltaTime;
         }
